@@ -8,9 +8,11 @@ header:
   overlay_color: "primary"
   overlay_opacity: 0.5
 ---
+## Articles
+- [**Torsional rigidity under geometric flows**](https://link.springer.com/article/10.1007/s11118-025-10243-y) together with Vicent Gimeno i García.
 
 ## Preprints
-- [**Torsional rigidity under geometric flows**](https://arxiv.org/pdf/2411.17435) together with Vicent Gimeno i García.
+- [**Comparison methods for semilinear elliptic problems on Riemannian manifolds with a Ricci lower bound**](https://arxiv.org/abs/2603.28479) together with José María Espinar and Diego A. Marín.
 
 ## Talks in Congress
 - **Basketball vs. Watermelon: From Which One Will The Ant Escape First?** at *IX BYMAT Conference: Bringing Young Mathematicians Together* (November 4th-7th 2024).
