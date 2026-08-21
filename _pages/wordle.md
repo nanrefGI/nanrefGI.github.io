@@ -8,7 +8,7 @@ toc: false
 ---
 
 Infinitas palabras para que practiques. 6 intentos. Sólo valen palabras del
-diccionario (no hay conjugaciones de verbos).
+diccionario (no hay conjugaciones de verbos ni palabras con acentos).
 <style>
   /* Tamaño del juego. Sube 
   --wd-ancho para agrandarlo todo (tablero incluido); 
