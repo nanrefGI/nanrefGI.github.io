@@ -7,13 +7,13 @@ author_profile: true
 toc: false
 ---
 
-Infinitas palabras para que practiques. 6 intentos. Sólo valen palabras del
+Infinitas palabras para que practiques. 6 intentos. Solo valen palabras del
 diccionario (no hay conjugaciones de verbos ni palabras con acentos).
 <style>
   /* Tamaño del juego. Sube 
   --wd-ancho para agrandarlo todo (tablero incluido); 
   --wd-tecla-alto
-  --wd-tecla-texto sólo afectan al teclado. */ 
+  --wd-tecla-texto solo afectan al teclado. */ 
   :root { --wd-ancho: 26rem;
          --wd-tecla-alto: 1rem;
          --wd-tecla-texto: 1.05rem; }
@@ -33,7 +33,7 @@ diccionario (no hay conjugaciones de verbos ni palabras con acentos).
         La letra no está en la palabra.</li>
   </ul>
   <p>El teclado se va pintando igual, para que veas de un vistazo lo que ya
-     has descartado. Si repites una letra en tu intento y la palabra sólo la
+     has descartado. Si repites una letra en tu intento y la palabra solo la
      tiene una vez, se marca una y la otra sale en gris.</p>
 
   <h2>Por dónde empezar</h2>
@@ -48,7 +48,7 @@ diccionario (no hay conjugaciones de verbos ni palabras con acentos).
   </div>
   <p>Entre las dos, la <b>e</b> y la <b>a</b> son ya una cuarta parte de todas
      las letras. Un buen primer intento gasta cinco letras distintas y mete
-     todas las frecuentes que pueda: en este diccionario sólo tres palabras
+     todas las frecuentes que pueda: en este diccionario solo tres palabras
      llevan las cinco a la vez — <b>osear</b>, <b>osera</b> y <b>seora</b>.
      Si prefieres algo más corriente, <b>rodea</b>, <b>aloes</b> o <b>aireo</b>
      se acercan mucho.</p>
