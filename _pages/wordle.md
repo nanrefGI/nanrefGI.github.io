@@ -9,6 +9,13 @@ toc: false
 
 Infinitas palabras para que practiques. 10 intentos. Sólo valen palabras del
 diccionario (no hay conjugaciones de verbos).
+<style>
+  /* Tamaño del juego. Sube --wd-ancho para agrandarlo todo (tablero incluido); 
+  --wd-tecla-alto y --wd-tecla-texto sólo afectan al teclado. */ 
+  :root { --wd-ancho: 26rem;
+         --wd-tecla-alto: 1rem;
+         --wd-tecla-texto: 1.05rem; }
+</style>
 
 <div id="wordle"></div>
 
