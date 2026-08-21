@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Adivina la palabra abuela!"
+title: "Adivinad las palabras!"
 permalink: /wordle/
 excerpt: "Adivina la palabra en cinco letras. Infinitas palabras para practicar."
 author_profile: true
@@ -54,7 +54,7 @@ diccionario (no hay conjugaciones de verbos).
   WordleES.iniciar({
     contenedor: '#wordle',
     datos: '{{ "/assets/data/palabras.json" | relative_url }}',
-    intentos: 10,
+    intentos: 8,
     modo: 'aleatorio'
   });
 </script>
