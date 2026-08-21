@@ -7,7 +7,7 @@
        WordleES.iniciar({
          contenedor: '#wordle',
          datos: '/assets/data/palabras.json',
-         intentos: 6,
+         intentos: 8,
          modo: 'diario'          // 'diario' | 'aleatorio'
        });
 
@@ -128,7 +128,7 @@ var WordleES = (function () {
       : cfg.contenedor;
     if (!raiz) return;
 
-    var INTENTOS = cfg.intentos || 10;
+    var INTENTOS = cfg.intentos || 8;
     var soluciones = datos.palabras.map(quitarAcentos);
     var validas = new Set(soluciones);
     (datos.plurales || []).forEach(function (p) { validas.add(quitarAcentos(p) + 's'); });
@@ -177,7 +177,7 @@ var WordleES = (function () {
         b.textContent = l;
         b.dataset.tecla = l;
         b.setAttribute('aria-label',
-          l === '↵' ? 'Enviar' : l === '⌫' ? 'Borrar' : 'Letra ' + l);
+          l === '✓' ? 'Enviar' : l === '⌫' ? 'Borrar' : 'Letra ' + l);
         tf.appendChild(b);
       });
       teclado.appendChild(tf);
@@ -256,7 +256,7 @@ var WordleES = (function () {
 
     function pulsar(t) {
       if (terminado) return;
-      if (t === '↵' || t === 'enter') return enviar();
+      if (t === '✓' || t === 'enter') return enviar();
       if (t === '⌫' || t === 'backspace') {
         actual = actual.slice(0, -1); decir(''); return pintar();
       }
