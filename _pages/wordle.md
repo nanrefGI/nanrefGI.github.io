@@ -67,3 +67,5 @@ diccionario (no hay conjugaciones de verbos ni palabras con acentos).
     modo: 'aleatorio'
   });
 </script>
+
+Las palabras han sido filtradas de este fichero: https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/es/es_50k.txt.
