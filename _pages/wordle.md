@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "Adivinad las palabras!"
+title: "¡Adivinad las palabras!"
 permalink: /wordle/
 excerpt: "Adivina la palabra en cinco letras. Infinitas palabras para practicar."
 author_profile: true
