@@ -96,8 +96,14 @@ var WordleES = (function () {
     document.head.appendChild(s);
   }
 
+  /* Quita tildes y diéresis pero respeta la ñ. Ojo: al descomponer en NFD,
+     la ñ se convierte en n + tilde combinada (\u0303), que cae dentro del
+     rango que borramos; por eso la apartamos antes y la devolvemos después. */
   function quitarAcentos(p) {
-    return p.normalize('NFD').replace(/[\u0300-\u0308]/g, '').normalize('NFC');
+    return String(p)
+      .replace(/ñ/g, '\u0001').replace(/Ñ/g, '\u0002')
+      .normalize('NFD').replace(/[\u0300-\u0308]/g, '').normalize('NFC')
+      .replace(/\u0001/g, 'ñ').replace(/\u0002/g, 'Ñ');
   }
 
   /* Comparación en dos pasadas: primero las letras en su sitio, y sólo
@@ -139,9 +145,40 @@ var WordleES = (function () {
     if (!raiz) return;
 
     var INTENTOS = cfg.intentos || 8;
-    var soluciones = datos.palabras.map(quitarAcentos);
+
+    /* Dos listas distintas, como en el Wordle original:
+       - "comunes" son las que pueden salir como solución (palabras corrientes),
+       - "palabras" es el diccionario entero, que sólo sirve para dar por
+         buenos los intentos. Así nadie tiene que adivinar "escoa" ni "teosa".
+       Si el fichero no trae "comunes", se usa el diccionario entero. */
+    /* Normaliza una lista: minúsculas, sin tildes (la ñ se queda) y sólo las
+       de la longitud pedida. Así da igual cómo venga el fichero. */
+    function normalizar(lista, largo) {
+      var vistas = {}, fuera = [];
+      var limpia = (lista || []).map(function (p) {
+        return quitarAcentos(String(p).toLowerCase().trim());
+      }).filter(function (p) {
+        if (p.length !== largo || !/^[a-zñ]+$/.test(p)) { fuera.push(p); return false; }
+        if (vistas[p]) return false;
+        vistas[p] = 1; return true;
+      });
+      if (fuera.length && window.console) {
+        console.warn('[WordleES] descartadas ' + fuera.length + ' entradas de ' + largo +
+          ' letras: ' + fuera.slice(0, 8).join(', ') + (fuera.length > 8 ? '…' : ''));
+      }
+      return limpia;
+    }
+
+    var dicc = normalizar(datos.palabras, LONGITUD);
+    var soluciones = datos.comunes && datos.comunes.length
+      ? normalizar(datos.comunes, LONGITUD)
+      : dicc;
+
+    /* Toda solución cuenta como intento válido aunque no esté en el
+       diccionario; si no, la palabra del día podría salir rechazada. */
     var validas = new Set(soluciones);
-    (datos.plurales || []).forEach(function (p) { validas.add(quitarAcentos(p) + 's'); });
+    dicc.forEach(function (p) { validas.add(p); });
+    normalizar(datos.plurales, LONGITUD - 1).forEach(function (p) { validas.add(p + 's'); });
 
     var objetivo = cfg.modo === 'aleatorio'
       ? soluciones[Math.floor(Math.random() * soluciones.length)]
@@ -318,9 +355,42 @@ var WordleES = (function () {
     if (window.console) console.error('[WordleES] ' + raiz.textContent);
   }
 
+  /* "datos" admite tres formas:
+       - un objeto ya cargado:  { comunes: [...], palabras: [...] }
+       - la ruta de un fichero: '/assets/data/palabras.json'
+       - dos rutas:             { comunes: '/…/comunes.json',
+                                  palabras: '/…/diccionario.json' }        */
+  function esRutas(d) {
+    return d && typeof d === 'object' &&
+      Object.keys(d).some(function (k) { return typeof d[k] === 'string'; });
+  }
+
+  function traer(url) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error(url + ' devolvió ' + r.status + ' ' + r.statusText);
+      return r.json();
+    });
+  }
+
   return {
     iniciar: function (cfg) {
       inyectarEstilos();
+
+      if (esRutas(cfg.datos)) {
+        var urls = cfg.datos;
+        Promise.all([traer(urls.palabras), urls.comunes ? traer(urls.comunes) : null])
+          .then(function (res) {
+            var d = res[0];
+            if (!d || !Array.isArray(d.palabras) || !d.palabras.length) {
+              throw new Error('el diccionario no trae una lista "palabras"');
+            }
+            if (res[1]) d.comunes = res[1].comunes || res[1].palabras || res[1];
+            crear(cfg, d);
+          })
+          .catch(function (e) { mostrarFallo(cfg, 'No se pudo cargar: ' + e.message + '.'); });
+        return;
+      }
+
       if (typeof cfg.datos !== 'string') { crear(cfg, cfg.datos); return; }
 
       if (location.protocol === 'file:') {
