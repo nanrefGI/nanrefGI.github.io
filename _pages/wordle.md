@@ -7,7 +7,7 @@ author_profile: true
 toc: false
 ---
 
-Infinitas palabras para que practiques. 6 intentos. Solo valen palabras del
+Infinitas palabras para que practiques. 8 intentos. Solo valen palabras del
 diccionario (no hay conjugaciones de verbos ni palabras con acentos).
 <style>
   /* Tamaño del juego. Sube 
