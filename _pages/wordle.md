@@ -62,7 +62,7 @@ diccionario (no hay conjugaciones de verbos ni palabras con acentos).
 <script>
   WordleES.iniciar({
     contenedor: '#wordle',
-    datos: '{{ "/assets/data/palabras.json" | relative_url }}',
+    datos: '{{ "/assets/data/palabras5.json" | relative_url }}',
     intentos: 8,
     modo: 'aleatorio'
   });
