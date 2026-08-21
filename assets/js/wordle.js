@@ -173,7 +173,7 @@ var WordleES = (function () {
       letras.forEach(function (l) {
         var b = document.createElement('button');
         b.type = 'button';
-        b.className = 'wd-tecla' + (l.length > 1 || l === '↵' || l === '⌫' ? ' wd-ancha' : '');
+        b.className = 'wd-tecla' + (l.length > 1 || l === '✓' || l === '⌫' ? ' wd-ancha' : '');
         b.textContent = l;
         b.dataset.tecla = l;
         b.setAttribute('aria-label',
