@@ -7,7 +7,7 @@
        WordleES.iniciar({
          contenedor: '#wordle',
          datos: '/assets/data/palabras.json',
-         intentos: 8,
+         intentos: 6,
          modo: 'diario'          // 'diario' | 'aleatorio'
        });
 
@@ -18,16 +18,24 @@ var WordleES = (function () {
   'use strict';
 
   var LONGITUD = 5;
+
+  /* Lo que se dibuja en las dos teclas especiales. Al estar en una constante,
+     cambiar el símbolo aquí lo cambia también en el aria-label y en el clic. */
+  var ENVIAR = '✓';
+  var BORRAR = '⌫';
+
   var TECLADO = [
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
     ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ñ'],
-    ['✓', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '⌫']
+    [ENVIAR, 'z', 'x', 'c', 'v', 'b', 'n', 'm', BORRAR]
   ];
 
   var CSS = [
     '.wd{--wd-verde:#2e7d5b;--wd-ambar:#c8912e;--wd-piedra:#787c84;',
     '--wd-borde:#c9cbd1;--wd-tinta:#1c1e22;--wd-fondo:transparent;--wd-tecla:#e8e9ec;',
-    'max-width:22rem;margin:0 auto;color:var(--wd-tinta);',
+    /* Tamaños ajustables desde la página: define --wd-ancho, --wd-tecla-alto
+       o --wd-tecla-texto en un <style> y estos valores se usan como respaldo. */
+    'max-width:var(--wd-ancho,22rem);margin:0 auto;color:var(--wd-tinta);',
     'font-family:system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-user-select:none;user-select:none}',
     '@media (prefers-color-scheme:dark){.wd{--wd-borde:#41454c;--wd-tinta:#eceef2;--wd-tecla:#33373e}}',
     '.wd-tablero{display:grid;gap:.35rem;margin:0 0 1rem}',
@@ -46,8 +54,10 @@ var WordleES = (function () {
     '.wd-aviso a{color:inherit}',
     '.wd-teclado{display:grid;gap:.5rem}',
     '.wd-tfila{display:flex;gap:.3rem;justify-content:center}',
-    '.wd-tecla{flex:1 1 auto;min-width:0;padding:.75rem .2rem;border:0;border-radius:.25rem;',
-    'background:var(--wd-tecla);color:inherit;font:inherit;font-size:.9rem;font-weight:600;',
+    '.wd-tecla{flex:1 1 auto;min-width:0;border:0;border-radius:.25rem;',
+    'padding:var(--wd-tecla-alto,.75rem) .2rem;',
+    'background:var(--wd-tecla);color:inherit;font:inherit;font-weight:600;',
+    'font-size:var(--wd-tecla-texto,.9rem);',
     'text-transform:uppercase;cursor:pointer}',
     '.wd-tecla:hover{filter:brightness(.95)}',
     '.wd-tecla:focus-visible{outline:2px solid currentColor;outline-offset:2px}',
@@ -60,7 +70,7 @@ var WordleES = (function () {
     '.wd-pie button{font:inherit;border:1px solid var(--wd-borde);background:none;color:inherit;',
     'border-radius:.25rem;padding:.35rem .7rem;cursor:pointer;margin:0 .2rem}',
     /* ayuda: clave de colores y letras frecuentes */
-    '.wd-ayuda{max-width:22rem;margin:2rem auto 0;font-size:.86rem;line-height:1.55}',
+    '.wd-ayuda{max-width:var(--wd-ancho,22rem);margin:2rem auto 0;font-size:.86rem;line-height:1.55}',
     '.wd-ayuda h2{font-size:.72rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;',
     'margin:1.5rem 0 .6rem;padding-bottom:.3rem;border-bottom:1px solid var(--wd-borde)}',
     '.wd-ayuda p{margin:.5rem 0}',
@@ -173,11 +183,11 @@ var WordleES = (function () {
       letras.forEach(function (l) {
         var b = document.createElement('button');
         b.type = 'button';
-        b.className = 'wd-tecla' + (l.length > 1 || l === '✓' || l === '⌫' ? ' wd-ancha' : '');
+        b.className = 'wd-tecla' + (l === ENVIAR || l === BORRAR ? ' wd-ancha' : '');
         b.textContent = l;
         b.dataset.tecla = l;
         b.setAttribute('aria-label',
-          l === '✓' ? 'Enviar' : l === '⌫' ? 'Borrar' : 'Letra ' + l);
+          l === ENVIAR ? 'Enviar' : l === BORRAR ? 'Borrar' : 'Letra ' + l);
         tf.appendChild(b);
       });
       teclado.appendChild(tf);
@@ -256,8 +266,8 @@ var WordleES = (function () {
 
     function pulsar(t) {
       if (terminado) return;
-      if (t === '✓' || t === 'enter') return enviar();
-      if (t === '⌫' || t === 'backspace') {
+      if (t === ENVIAR || t === 'enter') return enviar();
+      if (t === BORRAR || t === 'backspace') {
         actual = actual.slice(0, -1); decir(''); return pintar();
       }
       if (/^[a-zñ]$/.test(t) && actual.length < LONGITUD) {
