@@ -7,3 +7,5 @@ main:
     url: /about/
   - title: "Adivina La Palabra"
     url: /wordle/
+  - title: "Revolución"
+    url: /docencia/revolucion/
