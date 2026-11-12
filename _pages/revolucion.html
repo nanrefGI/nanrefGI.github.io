@@ -1,0 +1,1787 @@
+---
+# Página para Minimal Mistakes: guárdala en la carpeta _pages/
+title: "Longitudes, volúmenes y áreas de revolución"
+excerpt: "Apuntes interactivos de cálculo integral: cuánto mide una curva, qué volumen encierra un sólido de revolución y cuánta superficie tiene."
+permalink: /docencia/revolucion/
+layout: single
+classes: wide
+author_profile: false
+read_time: false
+share: false
+related: false
+---
+<div class="rv" id="rv-app" lang="es">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+<style>
+/* ===== Apuntes interactivos: longitudes, volúmenes y áreas de revolución =====
+   Todo está dentro de .rv para no chocar con la plantilla de la web.
+   Los colores de texto y fondo se heredan de la plantilla (tema claro u oscuro). */
+.rv{
+  --rv-rojo:#c9372e; --rv-azul:#2b61b4; --rv-naranja:#d9700f; --rv-violeta:#6f4fc0;
+  --rv-tint:rgba(128,128,128,.07); --rv-tint-2:rgba(128,128,128,.13); --rv-rule:rgba(128,128,128,.34);
+  --rv-hand:"Kalam","Segoe Print","Bradley Hand","Comic Neue",cursive;
+  --acc:var(--rv-rojo);
+  line-height:1.6;
+}
+@supports (color: color-mix(in srgb, red 50%, blue)){
+  .rv{
+    --rv-tint:color-mix(in srgb,currentColor 4.5%,transparent);
+    --rv-tint-2:color-mix(in srgb,currentColor 9%,transparent);
+    --rv-rule:color-mix(in srgb,currentColor 22%,transparent);
+  }
+}
+.rv.rv-dark{--rv-rojo:#f0776d; --rv-azul:#76a5f0; --rv-naranja:#f2a556; --rv-violeta:#ab92f2; color-scheme:dark}
+.rv,.rv *,.rv *::before,.rv *::after{box-sizing:border-box}
+.rv .rv-arc,.rv [data-lab="arc"]{--acc:var(--rv-rojo)}
+.rv .rv-vol,.rv [data-lab="vol"]{--acc:var(--rv-azul)}
+.rv .rv-area,.rv [data-lab="area"]{--acc:var(--rv-naranja)}
+.rv section{scroll-margin-top:1rem}
+.rv p{margin:0 0 1em}
+
+/* Texto */
+.rv .rv-lead{max-width:62ch;margin:0 0 1.1em;font-size:1.13em;line-height:1.55}
+.rv .rv-prose{max-width:70ch}
+.rv .rv-prose>p,.rv .rv-prose>ul{margin:0 0 1em}
+.rv .rv-prose>ul{padding-left:1.3em}
+.rv .rv-prose li{margin:0 0 .3em}
+.rv .rv-small{font-size:.92em;opacity:.86}
+.rv .rv-h2{display:table;margin:2.6em 0 .8em;padding:0 0 .36em;border:0;font-family:var(--rv-hand);font-weight:700;font-size:clamp(1.75rem,1.3rem + 1.7vw,2.45rem);line-height:1.12;letter-spacing:0;color:var(--acc);
+  background-image:linear-gradient(currentColor,currentColor),linear-gradient(currentColor,currentColor);background-repeat:no-repeat;background-size:100% 2px,94% 1.5px;background-position:0 100%,.15em calc(100% - 5px)}
+.rv .rv-h2-plain{color:inherit}
+.rv .rv-num{display:inline-flex;align-items:center;justify-content:center;width:1.3em;height:1.3em;margin-right:.32em;border:2px solid currentColor;border-radius:50%;font-size:.7em;line-height:1;vertical-align:.12em}
+.rv .rv-h3{margin:1.9em 0 .55em;padding:0;border:0;font-family:var(--rv-hand);font-weight:700;font-size:1.42rem;line-height:1.2;color:inherit}
+.rv .rv-ej{display:table;padding:0 .5em .1em 0;border-right:2px solid currentColor;border-bottom:2px solid currentColor}
+.rv .katex{font-size:1.1em}
+.rv .katex-display{overflow-x:auto;overflow-y:hidden;padding:.12em 0}
+
+/* Índice */
+.rv .rv-toc{display:flex;flex-wrap:wrap;gap:.45rem .55rem;margin:0 0 .4em;padding:0;list-style:none;font-size:.93em}
+.rv .rv-toc li{margin:0;padding:0}
+.rv .rv-toc .t-n{--acc:currentColor}
+.rv .rv-toc a{display:inline-flex;align-items:center;gap:.45em;padding:.28em .85em;border:1px solid var(--rv-rule);border-radius:999px;color:inherit;text-decoration:none;line-height:1.35}
+.rv .rv-toc a::before{content:"";width:.6em;height:.6em;border-radius:50%;background:var(--acc)}
+.rv .rv-toc a:hover{background:var(--rv-tint-2)}
+
+/* La receta */
+.rv .rv-steps{list-style:none;margin:1.3em 0 1.1em;padding:0;display:grid;gap:1.2rem 1.5rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,12.5rem),1fr))}
+.rv .rv-steps li{margin:0;padding:0}
+.rv .rv-steps svg{display:block;width:100%;max-width:15rem;height:auto;margin:0 0 .3rem;overflow:visible}
+.rv .rv-steps b{display:block;font-family:var(--rv-hand);font-weight:700;font-size:1.32rem;line-height:1.2}
+.rv .rv-steps p{margin:.15rem 0 0;font-size:.95em;line-height:1.5}
+.rv .s-ink{fill:none;stroke:currentColor}
+.rv .s-r,.rv .s-b,.rv .s-o{fill:none}
+.rv .s-r{stroke:var(--rv-rojo)} .rv .s-b{stroke:var(--rv-azul)} .rv .s-o{stroke:var(--rv-naranja)}
+.rv .f-r{fill:var(--rv-rojo)} .rv .f-b{fill:var(--rv-azul)} .rv .f-o{fill:var(--rv-naranja)}
+.rv .f-b2{fill:var(--rv-azul);fill-opacity:.22}
+.rv .t-m{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:15px;fill:currentColor}
+.rv .t-m.f-r{fill:var(--rv-rojo)}
+.rv .t-h{font-family:var(--rv-hand);font-weight:700;font-size:17px;fill:currentColor}
+.rv .t-sig{font-family:Georgia,"Times New Roman",serif;font-size:72px;fill:currentColor}
+.rv .t-plus{font-family:var(--rv-hand);font-size:24px;fill:currentColor;text-anchor:middle}
+
+/* Fórmulas y notas */
+.rv .rv-formula{margin:1.4em 0;padding:.55em 1.1em .35em;border-left:3px solid var(--acc);border-radius:0 12px 12px 0;background:var(--rv-tint)}
+.rv .rv-formula-k{display:block;font-family:var(--rv-hand);font-weight:700;font-size:1.18rem;line-height:1.2;color:var(--acc)}
+.rv .rv-formula .katex-display{margin:.45em 0 .25em}
+.rv .rv-pair{display:grid;gap:1.1rem 1.8rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,16.5rem),1fr));margin:1.2em 0 1.4em}
+.rv .rv-way{padding:.1rem 0 .1rem 1rem;border-left:3px solid var(--acc)}
+.rv .rv-way .rv-h3{margin:.1em 0 .4em}
+.rv .rv-way p{margin:0 0 .4em}
+.rv .rv-way .katex-display{margin:.6em 0 .2em}
+.rv .rv-note{margin:1.6em 0;padding:.15em 0 .2em 1.1em;border-left:3px dotted var(--acc)}
+.rv .rv-note-k{display:block;margin:0 0 .15em;font-family:var(--rv-hand);font-weight:700;font-size:1.28rem;line-height:1.2;color:var(--acc)}
+.rv .rv-note p{margin:0 0 .65em}
+.rv .rv-note p:last-child{margin-bottom:0}
+.rv .rv-ojo{--acc:var(--rv-violeta);border-left-style:solid;border-radius:0 12px 12px 0;background:var(--rv-tint);padding:.65em 1.1em .8em}
+.rv .rv-try{display:inline-block;margin:.15em .5em .5em 0;padding:.4em 1.05em;font:inherit;font-size:.92em;font-weight:600;line-height:1.3;color:var(--acc);background:transparent;border:1.5px solid currentColor;border-radius:999px;cursor:pointer;text-decoration:none}
+.rv .rv-try:hover{background:var(--rv-tint-2)}
+.rv button:focus-visible,.rv input:focus-visible,.rv select:focus-visible,.rv summary:focus-visible,.rv canvas:focus-visible,.rv a:focus-visible{outline:2.5px solid var(--acc);outline-offset:2px}
+
+/* Laboratorios */
+.rv .rv-lab{container-type:inline-size;margin:1.7em 0 2.3em;padding:clamp(.75rem,2.2vw,1.4rem);border:1px solid var(--rv-rule);border-radius:18px;background:var(--rv-tint);scroll-margin-top:1rem}
+.rv .rv-lab-head{margin:0 0 .4em}
+.rv .rv-lab-tag{display:block;font-family:var(--rv-hand);font-weight:700;font-size:1.22rem;line-height:1.1;color:var(--acc)}
+.rv .rv-lab-title{margin:.05em 0 .25em;padding:0;border:0;font-family:inherit;font-weight:700;font-size:1.15rem;line-height:1.3;color:inherit}
+.rv .rv-lab-hint{margin:0;max-width:72ch;font-size:.93em;opacity:.84}
+.rv .rv-ctrl{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.8rem 1.15rem;margin:.8rem 0 0}
+.rv .rv-field{display:flex;flex-direction:column;gap:.22rem;margin:0;min-width:0;font-size:.86rem;font-weight:600;line-height:1.3;color:inherit;cursor:default}
+.rv .rv-field>span{opacity:.84}
+.rv .rv-field-preset{flex:1 1 13rem}
+.rv .rv-field-f{flex:2 1 13rem}
+.rv .rv-field-ab{flex:0 1 6.5rem}
+.rv .rv-input,.rv .rv-select{display:block;width:100%;min-width:0;height:auto;margin:0;padding:.45rem .6rem;font:inherit;font-size:1rem;font-weight:400;line-height:1.3;color:CanvasText;background:Canvas;border:1px solid var(--rv-rule);border-radius:10px;box-shadow:none;appearance:auto}
+.rv .rv-segwrap{display:flex;flex-direction:column;gap:.22rem;min-width:0;font-size:.86rem;font-weight:600;line-height:1.3}
+.rv .rv-segwrap>span{opacity:.84}
+.rv .rv-seg{display:inline-flex;flex-wrap:wrap;gap:3px;width:max-content;max-width:100%;padding:3px;border:1px solid var(--rv-rule);border-radius:12px;background:Canvas}
+.rv .rv-seg button{margin:0;padding:.36em .8em;font:inherit;font-size:.9rem;font-weight:600;line-height:1.3;color:CanvasText;background:transparent;border:0;border-radius:9px;cursor:pointer}
+.rv .rv-seg button:hover{background:var(--rv-tint-2)}
+.rv .rv-seg button[aria-pressed="true"]{background:var(--acc);color:Canvas}
+.rv .rv-seg button[data-v="stairs"][aria-pressed="true"],.rv .rv-seg button[data-v="cyl"][aria-pressed="true"]{background:var(--rv-violeta)}
+.rv .rv-range{flex:1 1 15rem;display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:.65rem;row-gap:.15rem;min-width:0}
+.rv .rv-range>label{grid-column:1/-1;display:block;margin:0;font-size:.86rem;font-weight:600;line-height:1.3;color:inherit}
+.rv .rv-range output{color:var(--acc);font-weight:700;font-variant-numeric:tabular-nums}
+.rv input[type=range]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:28px;margin:0;padding:0;background:transparent;border:0;box-shadow:none;cursor:pointer;--p:50%}
+.rv input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:linear-gradient(to right,var(--acc) 0 var(--p),var(--rv-rule) var(--p) 100%)}
+.rv input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;margin-top:-7.5px;border-radius:50%;background:var(--acc);border:3px solid Canvas;box-shadow:0 0 0 1px var(--acc)}
+.rv input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--rv-rule)}
+.rv input[type=range]::-moz-range-progress{height:5px;border-radius:3px;background:var(--acc)}
+.rv input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:3px solid Canvas;box-shadow:0 0 0 1px var(--acc)}
+.rv .rv-play{display:inline-flex;align-items:center;justify-content:center;flex:none;width:2.25rem;height:2.25rem;margin:0;padding:0;border:1.5px solid var(--acc);border-radius:50%;background:transparent;color:var(--acc);cursor:pointer}
+.rv .rv-play svg{display:block;width:13px;height:13px}
+.rv .rv-play .i-pause{display:none}
+.rv .rv-play.is-on{background:var(--acc);color:Canvas}
+.rv .rv-play.is-on .i-play{display:none}
+.rv .rv-play.is-on .i-pause{display:block}
+.rv .rv-check{display:inline-flex;align-items:center;gap:.5rem;margin:0;padding:.4rem 0;font-size:.88rem;font-weight:600;line-height:1.3;color:inherit;cursor:pointer}
+.rv .rv-check input{display:inline-block;flex:none;width:1.05rem;height:1.05rem;margin:0;padding:0;accent-color:var(--acc);box-shadow:none}
+.rv .rv-msg{margin:.8rem 0 0;padding:.5rem .85rem;border-left:3px solid var(--rv-rojo);border-radius:0 10px 10px 0;background:var(--rv-tint-2);font-size:.93em;line-height:1.45}
+.rv .rv-msg-info{border-left-color:var(--acc)}
+.rv .rv-msg[hidden]{display:none}
+.rv .rv-views{display:grid;gap:.85rem;margin:1rem 0 0;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));align-items:start}
+.rv .rv-view{position:relative;min-width:0;margin:0;border:1px solid var(--rv-rule);border-radius:14px;overflow:hidden;background:Canvas;color:CanvasText}
+.rv .rv-view canvas{display:block;width:100%}
+.rv .rv-cap{margin:0;padding:.45rem .75rem .55rem;border-top:1px solid var(--rv-rule);font-size:.8rem;line-height:1.45;opacity:.9}
+.rv .rv-3d{position:relative;width:100%;aspect-ratio:1/1;max-height:440px;overflow:hidden}
+@supports not (aspect-ratio:1/1){.rv .rv-3d{height:360px}}
+.rv .rv-3d canvas{position:absolute;inset:0;width:100%!important;height:100%!important;cursor:grab;outline-offset:-3px}
+.rv .rv-3d.is-drag canvas{cursor:grabbing}
+.rv .rv-3d.is-off{aspect-ratio:auto;max-height:none}
+.rv .rv-no3d{margin:0;padding:1rem;font-size:.9rem}
+.rv .rv-reset{position:absolute;top:.55rem;right:.55rem;margin:0;padding:.25em .75em;font:inherit;font-size:.78rem;font-weight:600;line-height:1.3;color:CanvasText;background:Canvas;border:1px solid var(--rv-rule);border-radius:999px;cursor:pointer;opacity:.88}
+.rv .rv-reset:hover{opacity:1}
+.rv .rv-results{display:flex;flex-wrap:wrap;gap:.65rem;margin:.85rem 0 0}
+.rv .rv-stat{flex:1 1 8.5rem;min-width:0;padding:.55rem .8rem .6rem;border:1px solid var(--rv-rule);border-radius:12px;background:Canvas;color:CanvasText}
+.rv .rv-stat .k{display:block;font-size:.8rem;line-height:1.3;opacity:.8}
+.rv .rv-stat .v{display:block;margin-top:.12rem;font-size:1.34rem;font-weight:700;line-height:1.25;font-variant-numeric:tabular-nums}
+.rv .rv-stat .s{display:block;margin-top:.1rem;font-size:.76rem;line-height:1.35;opacity:.75}
+.rv .rv-stat.is-main{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.rv .rv-stat.is-main .v{color:var(--acc)}
+.rv .rv-lab.is-trap .rv-stat.is-main{--acc:var(--rv-violeta)}
+.rv .rv-stat.is-off .v{opacity:.55}
+.rv .rv-conv{flex:1 1 100%;min-width:0;border:1px solid var(--rv-rule);border-radius:12px;overflow:hidden;background:Canvas;color:CanvasText}
+.rv .rv-conv canvas{display:block;width:100%}
+.rv .rv-lab.is-stale .rv-views,.rv .rv-lab.is-stale .rv-results{opacity:.4;filter:grayscale(.6)}
+@container (min-width: 700px){.rv .rv-split{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:.85rem;align-items:start}}
+.rv .rv-help{margin:.9rem 0 0;font-size:.9em}
+.rv .rv-help summary{width:max-content;max-width:100%;cursor:pointer;font-weight:600;color:var(--acc)}
+.rv .rv-help ul{margin:.5rem 0 0;padding-left:1.2rem;columns:2 17rem;column-gap:2rem}
+.rv .rv-help li{margin:0 0 .25rem;break-inside:avoid}
+.rv code{padding:.06em .32em;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;color:inherit;background:var(--rv-tint-2);border-radius:5px}
+
+/* Chuleta y retos */
+.rv .rv-sheet{margin:1.1em 0 1em;border-top:2px solid currentColor}
+.rv .rv-row{display:grid;grid-template-columns:minmax(8rem,1fr) minmax(5.5rem,.7fr) minmax(0,2.2fr);gap:.2rem 1.2rem;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--rv-rule)}
+.rv .rv-row>span{min-width:0}
+.rv .rv-what{font-weight:700;color:var(--acc)}
+.rv .rv-piece{font-family:var(--rv-hand);font-size:1.18rem;line-height:1.2}
+.rv .rv-math{overflow-x:auto;overflow-y:hidden}
+@media (max-width:600px){.rv .rv-row{grid-template-columns:1fr auto}.rv .rv-math{grid-column:1/-1}}
+.rv .rv-retos{margin:1em 0;padding-left:1.5rem}
+.rv .rv-retos li{margin:0 0 1.2rem;padding-left:.35rem}
+.rv .rv-retos li::marker{font-family:var(--rv-hand);font-weight:700}
+.rv .rv-retos p{margin:0 0 .45rem}
+.rv .rv-foot{margin:2.4em 0 0;font-size:.85em;opacity:.75}
+</style>
+
+<noscript><p class="rv-msg">Los laboratorios de esta página necesitan JavaScript.</p></noscript>
+
+<p class="rv-lead">¿Cuánto mide una curva? ¿Cuánta agua cabe en un jarrón? ¿Cuánta pintura hace falta para pintar una copa? Las tres preguntas se contestan con la misma idea: cortar en trocitos, medir cada trocito como si fuera recto, sumar… y hacer los trocitos cada vez más pequeños.</p>
+
+<ul class="rv-toc" aria-label="Contenido">
+  <li class="rv-arc"><a href="#longitud">Longitud de una curva</a></li>
+  <li class="rv-vol"><a href="#volumen">Volúmenes de revolución</a></li>
+  <li class="rv-area"><a href="#area">Áreas de revolución</a></li>
+  <li class="t-n"><a href="#chuleta">Chuleta</a></li>
+  <li class="t-n"><a href="#retos">Retos</a></li>
+</ul>
+
+<section id="receta" aria-labelledby="rv-receta-t">
+  <h2 class="rv-h2 rv-h2-plain" id="rv-receta-t">La receta</h2>
+  <div class="rv-prose">
+    <p>Medir cosas rectas es fácil: un segmento se mide con una regla y un cilindro tiene volumen \(\pi r^2 h\). Para medir cosas curvas usaremos siempre los mismos cuatro pasos.</p>
+  </div>
+  <ol class="rv-steps">
+    <li><svg viewBox="0 0 200 116" aria-hidden="true">
+        <path class="s-ink" d="M8 92H194" stroke-width="1.3" opacity=".55"/>
+        <path class="s-r" d="M20 92V70.0M60 92V54.5M100 92V52.0M140 92V27.0M180 92V30.0" stroke-width="1.4" stroke-dasharray="3 4"/>
+        <path class="s-ink" d="M20 70C48 26 70 78 100 52S152 18 180 30" stroke-width="2.2" stroke-linecap="round"/>
+        <path class="s-r" d="M20 87V97M60 87V97M100 87V97M140 87V97M180 87V97" stroke-width="2"/>
+        <path class="s-r" d="M63 81H97M63 77V85M97 77V85" stroke-width="1.3"/>
+        <text class="t-m f-r" x="80" y="76" text-anchor="middle">&#916;x</text>
+        <text class="t-m" x="20" y="112" text-anchor="middle">a</text>
+        <text class="t-m" x="180" y="112" text-anchor="middle">b</text>
+      </svg><b>1. Trocea</b><p>Parte el intervalo \([a,b]\) en \(n\) trozos iguales, de ancho \(\Delta x=\frac{b-a}{n}\).</p></li>
+    <li><svg viewBox="0 0 200 116" aria-hidden="true">
+        <path class="s-ink" d="M10 84Q34 26 64 52" stroke-width="1.6" opacity=".7"/>
+        <path class="s-r" d="M10 84L64 52" stroke-width="3.2" stroke-linecap="round"/>
+        <path class="f-b" d="M96 32H110V84H96A8 26 0 0 1 96 32Z" opacity=".55"/>
+        <ellipse class="f-b2" cx="110" cy="58" rx="8" ry="26"/>
+        <ellipse class="s-b" cx="110" cy="58" rx="8" ry="26" stroke-width="1.6"/>
+        <path class="f-o" d="M150 36L138 82A26 7 0 0 0 190 82L178 36Z" opacity=".28"/>
+        <ellipse class="s-o" cx="164" cy="36" rx="14" ry="4" stroke-width="1.6"/>
+        <path class="s-o" d="M150 36L138 82M178 36L190 82M138 82A26 7 0 0 0 190 82" stroke-width="1.6"/>
+      </svg><b>2. Simplifica</b><p>Cambia cada trocito curvo por algo que sepas medir: un segmento, un disco, una capa o una banda.</p></li>
+    <li><svg viewBox="0 0 200 116" aria-hidden="true">
+        <text class="t-sig" x="6" y="86">&#931;</text>
+        <rect class="f-r" x="66" y="58" width="16" height="30" rx="2" opacity=".8"/>
+        <text class="t-plus" x="95" y="80">+</text>
+        <rect class="f-b" x="108" y="44" width="16" height="44" rx="2" opacity=".8"/>
+        <text class="t-plus" x="137" y="80">+</text>
+        <rect class="f-o" x="150" y="36" width="16" height="52" rx="2" opacity=".8"/>
+        <text class="t-plus" x="184" y="80">&#8230;</text>
+        <path class="s-ink" d="M60 92H198" stroke-width="1.2" opacity=".5"/>
+      </svg><b>3. Suma</b><p>Suma las medidas de todos los trocitos. El resultado es una aproximación.</p></li>
+    <li><svg viewBox="0 0 200 116" aria-hidden="true">
+        <path class="f-b" d="M20.00 92V65.2H26.67V92ZM26.67 92V57.9H33.33V92ZM33.33 92V53.5H40.00V92ZM40.00 92V51.7H46.67V92ZM46.67 92V51.9H53.33V92ZM53.33 92V53.4H60.00V92ZM60.00 92V55.7H66.67V92ZM66.67 92V57.9H73.33V92ZM73.33 92V59.4H80.00V92ZM80.00 92V59.6H86.67V92ZM86.67 92V58.1H93.33V92ZM93.33 92V54.6H100.00V92ZM100.00 92V49.2H106.67V92ZM106.67 92V43.8H113.33V92ZM113.33 92V38.9H120.00V92ZM120.00 92V34.6H126.67V92ZM126.67 92V31.0H133.33V92ZM133.33 92V28.1H140.00V92ZM140.00 92V26.1H146.67V92ZM146.67 92V24.9H153.33V92ZM153.33 92V24.6H160.00V92ZM160.00 92V25.1H166.67V92ZM166.67 92V26.5H173.33V92ZM173.33 92V28.7H180.00V92Z" opacity=".2"/>
+        <path class="s-b" d="M20.00 92V65.2H26.67V92ZM26.67 92V57.9H33.33V92ZM33.33 92V53.5H40.00V92ZM40.00 92V51.7H46.67V92ZM46.67 92V51.9H53.33V92ZM53.33 92V53.4H60.00V92ZM60.00 92V55.7H66.67V92ZM66.67 92V57.9H73.33V92ZM73.33 92V59.4H80.00V92ZM80.00 92V59.6H86.67V92ZM86.67 92V58.1H93.33V92ZM93.33 92V54.6H100.00V92ZM100.00 92V49.2H106.67V92ZM106.67 92V43.8H113.33V92ZM113.33 92V38.9H120.00V92ZM120.00 92V34.6H126.67V92ZM126.67 92V31.0H133.33V92ZM133.33 92V28.1H140.00V92ZM140.00 92V26.1H146.67V92ZM146.67 92V24.9H153.33V92ZM153.33 92V24.6H160.00V92ZM160.00 92V25.1H166.67V92ZM166.67 92V26.5H173.33V92ZM173.33 92V28.7H180.00V92Z" stroke-width=".9" opacity=".75"/>
+        <path class="s-ink" d="M8 92H194" stroke-width="1.3" opacity=".55"/>
+        <path class="s-ink" d="M20 70C48 26 70 78 100 52S152 18 180 30" stroke-width="2.2" stroke-linecap="round"/>
+        <text class="t-h" x="10" y="26">n &#8594; &#8734;</text>
+      </svg><b>4. Afina</b><p>Haz los trozos cada vez más finos. La suma se acerca a un número: ese número es la integral.</p></li>
+  </ol>
+  <div class="rv-prose">
+    <p class="rv-small">En las fórmulas, la suma \(\sum\) se convierte en \(\int\), que es una S alargada (de «suma»), y el ancho \(\Delta x\) de un trozo se convierte en \(dx\), un trozo infinitamente fino.</p>
+  </div>
+</section>
+
+<!-- ================= 1. LONGITUD ================= -->
+<section id="longitud" class="rv-arc" aria-labelledby="rv-t1">
+  <h2 class="rv-h2" id="rv-t1"><span class="rv-num">1</span>¿Cuánto mide una curva?</h2>
+  <div class="rv-prose">
+    <p>Cuando dibujamos la gráfica de una función \(f\), en realidad dibujamos un camino: el que recorre un punto que, en cada instante \(t\), está en la posición \((t, f(t))\). Si recorremos ese camino desde \(x=a\) hasta \(x=b\), ¿qué distancia hemos andado?</p>
+    <p>Una primera pista: la curva nunca es más corta que la recta que une sus extremos, porque el camino más corto entre dos puntos es la línea recta. Esa recta es la hipotenusa de un triángulo rectángulo, así que, por Pitágoras,</p>
+    \[ \text{longitud} \;\ge\; \sqrt{(b-a)^2+\big(f(b)-f(a)\big)^2}. \]
+    <p>Para afinar, cambiamos la curva por varios segmentos encadenados, una <em>poligonal</em>. Cada segmento es la hipotenusa de un triangulito de catetos \(\Delta x\) (lo que avanzamos) y \(\Delta y\) (lo que subimos o bajamos), así que mide \(\sqrt{\Delta x^2+\Delta y^2}\).</p>
+  </div>
+
+  <div class="rv-lab" data-lab="arc" data-start="catenaria" id="lab-longitud">
+    <div class="rv-lab-head">
+      <span class="rv-lab-tag">Laboratorio 1</span>
+      <h3 class="rv-lab-title">La curva y su poligonal</h3>
+      <p class="rv-lab-hint">Cambia el número de trozos y mira cómo la poligonal se pega a la curva. Con pocos trozos verás los triángulos de Pitágoras; con el botón de play los trozos aumentan solos.</p>
+    </div>
+    <div class="rv-ctrl">
+      <label class="rv-field rv-field-preset"><span>Ejemplo</span><select class="rv-select" data-role="preset"></select></label>
+      <label class="rv-field rv-field-f"><span>\(f(x)=\)</span><input class="rv-input" data-role="expr" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></label>
+      <label class="rv-field rv-field-ab"><span>desde \(a=\)</span><input class="rv-input" data-role="a" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></label>
+      <label class="rv-field rv-field-ab"><span>hasta \(b=\)</span><input class="rv-input" data-role="b" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></label>
+    </div>
+    <div class="rv-ctrl">
+      <div class="rv-range">
+        <label for="rv-arc-n">Número de trozos: <output data-out="n">4</output></label>
+        <input type="range" id="rv-arc-n" data-role="n" min="1" max="100" step="1" value="4">
+        <button type="button" class="rv-play" data-play="n" aria-label="Aumentar los trozos poco a poco"><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8v10.4L13 8z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.8h3v10.4H4zM9 2.8h3v10.4H9z" fill="currentColor"/></svg></button>
+      </div>
+      <div class="rv-segwrap"><span id="rv-arc-mode">Aproximar con</span>
+        <div class="rv-seg" role="group" aria-labelledby="rv-arc-mode" data-role="mode">
+          <button type="button" data-v="seg" aria-pressed="true">Segmentos</button><button type="button" data-v="stairs" aria-pressed="false">Escalones</button>
+        </div>
+      </div>
+    </div>
+    <p class="rv-msg" data-role="error" role="alert" hidden></p>
+    <div class="rv-split">
+    <div class="rv-views">
+      <div class="rv-view"><canvas data-role="plot" role="img" aria-label="Gráfica de la función y de la poligonal que la aproxima"></canvas><p class="rv-cap" data-role="cap"></p></div>
+    </div>
+    <div class="rv-results">
+      <div class="rv-stat is-main"><span class="k" data-out="approxLabel">Poligonal</span><span class="v" data-out="approx">–</span></div>
+      <div class="rv-stat"><span class="k">Longitud de la curva</span><span class="v" data-out="exact">–</span><span class="s" data-out="exactNote"></span></div>
+      <div class="rv-stat"><span class="k">Diferencia</span><span class="v" data-out="err">–</span><span class="s" data-out="errPct"></span></div>
+      <div class="rv-conv"><canvas data-role="conv" role="img" aria-label="Valor de la suma según el número de trozos"></canvas><p class="rv-cap">Cada punto es la suma con \(n\) trozos, de 1 a 100. La línea discontinua es el valor real y el punto grande marca tu \(n\).</p></div>
+    </div>
+    </div>
+    <details class="rv-help"><summary>Cómo escribir la función</summary><ul>
+      <li>Potencias: <code>x^2</code>, <code>x^(1/2)</code></li>
+      <li>Raíces: <code>sqrt(x)</code> o <code>raiz(x)</code></li>
+      <li>Trigonometría: <code>sen(x)</code>, <code>cos(x)</code>, <code>tg(x)</code></li>
+      <li>Exponencial: <code>e^x</code> o <code>exp(x)</code></li>
+      <li>Logaritmo neperiano: <code>ln(x)</code></li>
+      <li>Constantes: <code>pi</code> y <code>e</code></li>
+      <li>Multiplicar sin asterisco: <code>2x</code>, <code>3sen(x)</code>, <code>x(x+1)</code></li>
+      <li>Decimales con punto o con coma: <code>0.5</code> o <code>0,5</code></li>
+      <li>En \(a\) y \(b\) valen expresiones: <code>2pi</code>, <code>1/2</code></li>
+    </ul></details>
+  </div>
+
+  <div class="rv-prose">
+    <h3 class="rv-h3">De la suma a la integral</h3>
+    <p>Sacando \(\Delta x\) factor común, cada segmento mide</p>
+    \[ \sqrt{\Delta x^2+\Delta y^2} \;=\; \sqrt{1+\left(\frac{\Delta y}{\Delta x}\right)^2}\;\Delta x . \]
+    <p>El cociente \(\frac{\Delta y}{\Delta x}\) es la pendiente del segmento. Cuando el trozo es muy pequeño, esa pendiente es prácticamente la de la curva, es decir, la derivada \(f'(x)\). Sumando todos los trozos y afinando llegamos a la fórmula:</p>
+    <div class="rv-formula"><span class="rv-formula-k">Longitud de una curva</span>\[ L \;=\; \int_a^b \sqrt{1+f'(x)^2}\;dx \]</div>
+    <div class="rv-note" role="note"><span class="rv-note-k">La idea</span>
+      <p>\(\sqrt{1+f'(x)^2}\) es un <em>factor de estiramiento</em>: indica cuántas veces es más largo un trocito de curva que su sombra sobre el eje \(x\). Donde la curva es plana vale 1; donde es muy empinada, es grande.</p>
+    </div>
+    <div class="rv-note rv-ojo" role="note"><span class="rv-note-k">¡Ojo con los escalones!</span>
+      <p>¿Y si aproximamos la curva con escalones, tramos horizontales y verticales? Se pegan a la curva tanto como queramos… pero su longitud no se acerca a la de la curva. En la diagonal \(y=x\) entre 0 y 1, la escalera mide siempre 2, aunque la diagonal mide \(\sqrt2\approx 1{,}414\). Los trocitos tienen que ir en la dirección de la curva: no basta con que estén cerca.</p>
+      <button type="button" class="rv-try" data-try="arc:recta" data-mode="stairs" data-n="6">Ver la escalera en el laboratorio</button>
+    </div>
+    <h3 class="rv-h3 rv-ej">Ejemplo: la catenaria</h3>
+    <p>La catenaria es la forma de una cadena que cuelga de sus dos extremos. Gaudí la usaba para diseñar arcos: colgaba cadenas con pesos y después daba la vuelta a la figura. Su ecuación es</p>
+    \[ f(x)=\frac{e^x+e^{-x}}{2}, \qquad f'(x)=\frac{e^x-e^{-x}}{2}. \]
+    <p>Para medirla entre \(x=-1\) y \(x=1\) ocurre un pequeño milagro algebraico:</p>
+    \[ 1+f'(x)^2 = 1+\frac{e^{2x}-2+e^{-2x}}{4} = \frac{e^{2x}+2+e^{-2x}}{4} = \left(\frac{e^x+e^{-x}}{2}\right)^2 . \]
+    <p>La raíz desaparece y la integral es inmediata:</p>
+    \[ L=\int_{-1}^{1}\frac{e^x+e^{-x}}{2}\,dx=\left[\frac{e^x-e^{-x}}{2}\right]_{-1}^{1}=e-\frac1e\approx 2{,}3504 . \]
+    <button type="button" class="rv-try" data-try="arc:catenaria">Ver la catenaria en el laboratorio</button>
+  </div>
+</section>
+
+<!-- ================= 2. VOLÚMENES ================= -->
+<section id="volumen" class="rv-vol" aria-labelledby="rv-t2">
+  <h2 class="rv-h2" id="rv-t2"><span class="rv-num">2</span>Volúmenes de revolución</h2>
+  <div class="rv-prose">
+    <p>Piensa en un torno de alfarero. Si hacemos girar una región plana alrededor de una recta, el <em>eje de giro</em>, la región barre un sólido: un jarrón, un cuenco, una peonza… ¿Qué volumen tiene?</p>
+    <p>Seguimos la receta: troceamos la región que hay entre la gráfica y el eje \(OX\) en rectángulos verticales muy finos, y miramos en qué se convierte cada rectángulo al girar. Depende del eje.</p>
+  </div>
+  <div class="rv-pair">
+    <div class="rv-way">
+      <h3 class="rv-h3">Alrededor del eje OX: discos</h3>
+      <p>Cada rectángulo se convierte en una moneda: un disco de radio \(f(x)\) y grosor \(\Delta x\). Es como cortar un salchichón en rodajas. Un disco tiene volumen \(\pi\cdot\text{radio}^2\cdot\text{grosor}\), así que</p>
+      \[ V=\int_a^b \pi\, f(x)^2\,dx \]
+    </div>
+    <div class="rv-way">
+      <h3 class="rv-h3">Alrededor del eje OY: capas</h3>
+      <p>Cada rectángulo se convierte en un tubo fino, como las capas de una cebolla. Si cortas el tubo y lo desenrollas, es casi una lámina de largo \(2\pi x\) (la circunferencia), alto \(f(x)\) y grosor \(\Delta x\). Por tanto</p>
+      \[ V=\int_a^b 2\pi\, x\, f(x)\,dx \]
+    </div>
+  </div>
+
+  <div class="rv-lab" data-lab="vol" data-start="ej18-ii" id="lab-volumen">
+    <div class="rv-lab-head">
+      <span class="rv-lab-tag">Laboratorio 2</span>
+      <h3 class="rv-lab-title">Discos y capas</h3>
+      <p class="rv-lab-hint">Elige el eje y el número de trozos. El deslizador «Giro» hace girar la región poco a poco, como en un torno; con su botón de play da la vuelta entera. Arrastra la figura 3D para mirarla desde otro lado.</p>
+    </div>
+    <div class="rv-ctrl">
+      <label class="rv-field rv-field-preset"><span>Ejemplo</span><select class="rv-select" data-role="preset"></select></label>
+      <label class="rv-field rv-field-f"><span>\(f(x)=\)</span><input class="rv-input" data-role="expr" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></label>
+      <label class="rv-field rv-field-ab"><span>desde \(a=\)</span><input class="rv-input" data-role="a" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></label>
+      <label class="rv-field rv-field-ab"><span>hasta \(b=\)</span><input class="rv-input" data-role="b" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></label>
+    </div>
+    <div class="rv-ctrl">
+      <div class="rv-segwrap"><span id="rv-vol-axis">Eje de giro</span>
+        <div class="rv-seg" role="group" aria-labelledby="rv-vol-axis" data-role="axis">
+          <button type="button" data-v="x" aria-pressed="false">Eje OX (discos)</button><button type="button" data-v="y" aria-pressed="true">Eje OY (capas)</button>
+        </div>
+      </div>
+      <div class="rv-segwrap"><span id="rv-vol-sample">Altura de cada rectángulo, tomada en</span>
+        <div class="rv-seg" role="group" aria-labelledby="rv-vol-sample" data-role="sample">
+          <button type="button" data-v="L" aria-pressed="true">Izquierda</button><button type="button" data-v="M" aria-pressed="false">Centro</button><button type="button" data-v="R" aria-pressed="false">Derecha</button>
+        </div>
+      </div>
+    </div>
+    <div class="rv-ctrl">
+      <div class="rv-range">
+        <label for="rv-vol-n">Número de trozos: <output data-out="n">8</output></label>
+        <input type="range" id="rv-vol-n" data-role="n" min="1" max="100" step="1" value="8">
+        <button type="button" class="rv-play" data-play="n" aria-label="Aumentar los trozos poco a poco"><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8v10.4L13 8z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.8h3v10.4H4zM9 2.8h3v10.4H9z" fill="currentColor"/></svg></button>
+      </div>
+      <div class="rv-range">
+        <label for="rv-vol-g">Giro: <output data-out="giro">270°</output></label>
+        <input type="range" id="rv-vol-g" data-role="giro" min="0" max="360" step="1" value="270">
+        <button type="button" class="rv-play" data-play="g" aria-label="Girar la región una vuelta completa"><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8v10.4L13 8z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.8h3v10.4H4zM9 2.8h3v10.4H9z" fill="currentColor"/></svg></button>
+      </div>
+      <label class="rv-check"><input type="checkbox" data-role="ghost" checked> Ver el sólido real</label>
+    </div>
+    <p class="rv-msg" data-role="error" role="alert" hidden></p>
+    <p class="rv-msg rv-msg-info" data-role="info" role="status" hidden></p>
+    <div class="rv-views">
+      <div class="rv-view"><canvas data-role="plot" role="img" aria-label="Región bajo la gráfica dividida en rectángulos"></canvas><p class="rv-cap" data-role="cap"></p></div>
+      <div class="rv-view"><div class="rv-3d" data-role="three"></div><p class="rv-cap">Arrastra para girar la vista (en el ordenador también valen las flechas del teclado).</p></div>
+    </div>
+    <div class="rv-results">
+      <div class="rv-stat is-main"><span class="k" data-out="approxLabel">Suma</span><span class="v" data-out="approx">–</span></div>
+      <div class="rv-stat"><span class="k">Volumen del sólido</span><span class="v" data-out="exact">–</span><span class="s" data-out="exactNote"></span></div>
+      <div class="rv-stat"><span class="k">Diferencia</span><span class="v" data-out="err">–</span><span class="s" data-out="errPct"></span></div>
+      <div class="rv-conv"><canvas data-role="conv" role="img" aria-label="Valor de la suma según el número de trozos"></canvas><p class="rv-cap">Cada punto es la suma con \(n\) trozos, de 1 a 100. Prueba a cambiar dónde se mide la altura: todas las sumas acaban en el mismo número.</p></div>
+    </div>
+    <details class="rv-help"><summary>Cómo escribir la función</summary><ul>
+      <li>Potencias: <code>x^2</code>, <code>x^(1/2)</code></li>
+      <li>Raíces: <code>sqrt(x)</code> o <code>raiz(x)</code></li>
+      <li>Trigonometría: <code>sen(x)</code>, <code>cos(x)</code>, <code>tg(x)</code></li>
+      <li>Exponencial: <code>e^x</code> o <code>exp(x)</code></li>
+      <li>Logaritmo neperiano: <code>ln(x)</code></li>
+      <li>Constantes: <code>pi</code> y <code>e</code></li>
+      <li>Multiplicar sin asterisco: <code>2x</code>, <code>3sen(x)</code>, <code>x(x+1)</code></li>
+      <li>Decimales con punto o con coma: <code>0.5</code> o <code>0,5</code></li>
+      <li>En \(a\) y \(b\) valen expresiones: <code>2pi</code>, <code>1/2</code></li>
+    </ul></details>
+  </div>
+
+  <div class="rv-prose">
+    <h3 class="rv-h3 rv-ej">Ejemplos del ejercicio 18</h3>
+    <p><strong>(II)</strong> Giramos \(f(x)=x^2\) alrededor del eje \(OY\), entre \(x=0\) y \(x=1\). Con capas:</p>
+    \[ V=\int_0^1 2\pi x\cdot x^2\,dx=2\pi\left[\frac{x^4}{4}\right]_0^1=\frac{\pi}{2}\approx 1{,}5708 . \]
+    <button type="button" class="rv-try" data-try="vol:ej18-ii">Ver (II) en el laboratorio</button>
+    <p><strong>(III)</strong> Giramos \(f(x)=\sqrt{x}\) alrededor del eje \(OX\), entre \(x=0\) y \(x=1\). Con discos:</p>
+    \[ V=\int_0^1 \pi\,\big(\sqrt{x}\big)^2\,dx=\pi\left[\frac{x^2}{2}\right]_0^1=\frac{\pi}{2} . \]
+    <button type="button" class="rv-try" data-try="vol:ej18-iii">Ver (III) en el laboratorio</button>
+    <div class="rv-note" role="note"><span class="rv-note-k">¿Casualidad?</span>
+      <p>Los dos sólidos encajan como piezas de un puzle. Si pones de pie el sólido de (III), cabe justo en el hueco del de (II), y juntos forman un cilindro de radio 1 y altura 1, cuyo volumen es \(\pi\). Cada uno es la mitad. Arquímedes ya lo sabía hace más de 2200 años… sin integrales.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3. ÁREAS ================= -->
+<section id="area" class="rv-area" aria-labelledby="rv-t3">
+  <h2 class="rv-h2" id="rv-t3"><span class="rv-num">3</span>Áreas de superficies de revolución</h2>
+  <div class="rv-prose">
+    <p>Ahora no nos interesa lo que cabe dentro, sino la piel: ¿cuánta pintura hace falta para pintar la superficie? Esta vez solo hacemos girar la curva, no la región que tiene debajo.</p>
+    <p>Troceamos la curva igual que en el apartado 1. Al girar, cada segmento barre una banda, como la pantalla de una lámpara. Si la cortamos y la estiramos, es casi una cinta rectangular:</p>
+    <ul>
+      <li>de <strong>largo</strong>, la circunferencia que recorre: \(2\pi\cdot\text{radio}\);</li>
+      <li>de <strong>ancho</strong>, lo que mide el segmento, es decir, la hipotenusa \(\sqrt{1+f'(x)^2}\,\Delta x\).</li>
+    </ul>
+  </div>
+  <div class="rv-pair">
+    <div class="rv-way">
+      <h3 class="rv-h3">Alrededor del eje OX</h3>
+      <p>El radio es la altura de la curva, \(f(x)\):</p>
+      \[ A=\int_a^b 2\pi\, f(x)\,\sqrt{1+f'(x)^2}\,dx \]
+    </div>
+    <div class="rv-way">
+      <h3 class="rv-h3">Alrededor del eje OY</h3>
+      <p>El radio es la distancia al eje, \(x\):</p>
+      \[ A=\int_a^b 2\pi\, x\,\sqrt{1+f'(x)^2}\,dx \]
+    </div>
+  </div>
+  <div class="rv-prose">
+    <div class="rv-note rv-ojo" role="note"><span class="rv-note-k">¡Ojo con los cilindros!</span>
+      <p>Es tentador usar cilindros rectos, como hicimos con los volúmenes. Pero un cilindro recto mide la sombra del trocito de curva sobre el eje, no el trocito, y la suma se acerca a un número equivocado. Compruébalo en el laboratorio con la opción «Cilindros».</p>
+      <p>¿Por qué con los volúmenes sí funcionaba? Al cambiar la región por discos, lo que se pierde en cada trozo es una esquinita de tamaño \(\Delta x\cdot\Delta y\), que se vuelve insignificante al afinar. En un área, el error está en la inclinación: una banda inclinada siempre es más ancha que su sombra, por muy fina que sea. Por eso hace falta la hipotenusa, igual que en la longitud.</p>
+    </div>
+  </div>
+
+  <div class="rv-lab" data-lab="area" data-start="cono" id="lab-area">
+    <div class="rv-lab-head">
+      <span class="rv-lab-tag">Laboratorio 3</span>
+      <h3 class="rv-lab-title">Bandas, y la trampa de los cilindros</h3>
+      <p class="rv-lab-hint">Compara dos maneras de forrar la superficie. Con «Bandas» la suma se acerca al área real; con «Cilindros», a otro número. La gráfica de abajo muestra las dos sumas a la vez.</p>
+    </div>
+    <div class="rv-ctrl">
+      <label class="rv-field rv-field-preset"><span>Ejemplo</span><select class="rv-select" data-role="preset"></select></label>
+      <label class="rv-field rv-field-f"><span>\(f(x)=\)</span><input class="rv-input" data-role="expr" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></label>
+      <label class="rv-field rv-field-ab"><span>desde \(a=\)</span><input class="rv-input" data-role="a" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></label>
+      <label class="rv-field rv-field-ab"><span>hasta \(b=\)</span><input class="rv-input" data-role="b" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></label>
+    </div>
+    <div class="rv-ctrl">
+      <div class="rv-segwrap"><span id="rv-area-axis">Eje de giro</span>
+        <div class="rv-seg" role="group" aria-labelledby="rv-area-axis" data-role="axis">
+          <button type="button" data-v="x" aria-pressed="false">Eje OX</button><button type="button" data-v="y" aria-pressed="true">Eje OY</button>
+        </div>
+      </div>
+      <div class="rv-segwrap"><span id="rv-area-mode">Piezas</span>
+        <div class="rv-seg" role="group" aria-labelledby="rv-area-mode" data-role="mode">
+          <button type="button" data-v="band" aria-pressed="true">Bandas inclinadas</button><button type="button" data-v="cyl" aria-pressed="false">Cilindros rectos</button>
+        </div>
+      </div>
+    </div>
+    <div class="rv-ctrl">
+      <div class="rv-range">
+        <label for="rv-area-n">Número de trozos: <output data-out="n">6</output></label>
+        <input type="range" id="rv-area-n" data-role="n" min="1" max="100" step="1" value="6">
+        <button type="button" class="rv-play" data-play="n" aria-label="Aumentar los trozos poco a poco"><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8v10.4L13 8z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.8h3v10.4H4zM9 2.8h3v10.4H9z" fill="currentColor"/></svg></button>
+      </div>
+      <div class="rv-range">
+        <label for="rv-area-g">Giro: <output data-out="giro">270°</output></label>
+        <input type="range" id="rv-area-g" data-role="giro" min="0" max="360" step="1" value="270">
+        <button type="button" class="rv-play" data-play="g" aria-label="Girar la curva una vuelta completa"><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.8v10.4L13 8z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.8h3v10.4H4zM9 2.8h3v10.4H9z" fill="currentColor"/></svg></button>
+      </div>
+      <label class="rv-check"><input type="checkbox" data-role="ghost" checked> Ver la superficie real</label>
+    </div>
+    <p class="rv-msg" data-role="error" role="alert" hidden></p>
+    <p class="rv-msg rv-msg-info" data-role="info" role="status" hidden></p>
+    <div class="rv-views">
+      <div class="rv-view"><canvas data-role="plot" role="img" aria-label="Curva dividida en trozos y piezas que la aproximan"></canvas><p class="rv-cap" data-role="cap"></p></div>
+      <div class="rv-view"><div class="rv-3d" data-role="three"></div><p class="rv-cap">Arrastra para girar la vista (en el ordenador también valen las flechas del teclado).</p></div>
+    </div>
+    <div class="rv-results">
+      <div class="rv-stat is-main" data-stat="band"><span class="k" data-out="bandLabel">Con bandas</span><span class="v" data-out="band">–</span></div>
+      <div class="rv-stat is-off" data-stat="cyl"><span class="k" data-out="cylLabel">Con cilindros</span><span class="v" data-out="cyl">–</span></div>
+      <div class="rv-stat"><span class="k">Área de la superficie</span><span class="v" data-out="exact">–</span><span class="s" data-out="exactNote"></span></div>
+      <div class="rv-stat"><span class="k">Diferencia</span><span class="v" data-out="err">–</span><span class="s" data-out="errPct"></span></div>
+      <div class="rv-conv"><canvas data-role="conv" role="img" aria-label="Sumas con bandas y con cilindros según el número de trozos"></canvas><p class="rv-cap">Las dos sumas a la vez, de 1 a 100 trozos. La línea discontinua es el área real.</p></div>
+    </div>
+    <details class="rv-help"><summary>Cómo escribir la función</summary><ul>
+      <li>Potencias: <code>x^2</code>, <code>x^(1/2)</code></li>
+      <li>Raíces: <code>sqrt(x)</code> o <code>raiz(x)</code></li>
+      <li>Trigonometría: <code>sen(x)</code>, <code>cos(x)</code>, <code>tg(x)</code></li>
+      <li>Exponencial: <code>e^x</code> o <code>exp(x)</code></li>
+      <li>Logaritmo neperiano: <code>ln(x)</code></li>
+      <li>Constantes: <code>pi</code> y <code>e</code></li>
+      <li>Multiplicar sin asterisco: <code>2x</code>, <code>3sen(x)</code>, <code>x(x+1)</code></li>
+      <li>Decimales con punto o con coma: <code>0.5</code> o <code>0,5</code></li>
+      <li>En \(a\) y \(b\) valen expresiones: <code>2pi</code>, <code>1/2</code></li>
+    </ul></details>
+  </div>
+
+  <div class="rv-prose">
+    <h3 class="rv-h3 rv-ej">Ejemplo: el cono de los apuntes</h3>
+    <p>Giramos la recta \(y=x\), con \(0\le x\le 1\), alrededor del eje \(OY\). Sale un cono boca arriba, de radio 1 y altura 1. Como \(f'(x)=1\),</p>
+    \[ A=\int_0^1 2\pi x\sqrt{1+1^2}\,dx=2\sqrt2\,\pi\left[\frac{x^2}{2}\right]_0^1=\sqrt2\,\pi\approx 4{,}4429 . \]
+    <p>Comprobación: el área lateral de un cono es \(\pi\cdot r\cdot g\), donde \(g\) es la generatriz (el lado inclinado). Aquí \(r=1\) y \(g=\sqrt2\), así que coincide. Con cilindros habríamos obtenido \(\pi\approx 3{,}1416\): demasiado poco.</p>
+    <button type="button" class="rv-try" data-try="area:cono">Ver el cono en el laboratorio</button>
+  </div>
+</section>
+
+<!-- ================= CHULETA ================= -->
+<section id="chuleta" aria-labelledby="rv-t4">
+  <h2 class="rv-h2 rv-h2-plain" id="rv-t4">Chuleta</h2>
+  <div class="rv-prose"><p>Todas las fórmulas salen de la misma receta: lo que mide una pieza sencilla, sumado sobre todas las piezas.</p></div>
+  <div class="rv-sheet">
+    <div class="rv-row rv-arc"><span class="rv-what">Longitud</span><span class="rv-piece">segmentos</span><span class="rv-math">\(\displaystyle L=\int_a^b \sqrt{1+f'(x)^2}\,dx\)</span></div>
+    <div class="rv-row rv-vol"><span class="rv-what">Volumen, eje OX</span><span class="rv-piece">discos</span><span class="rv-math">\(\displaystyle V=\int_a^b \pi\, f(x)^2\,dx\)</span></div>
+    <div class="rv-row rv-vol"><span class="rv-what">Volumen, eje OY</span><span class="rv-piece">capas</span><span class="rv-math">\(\displaystyle V=\int_a^b 2\pi\, x\, f(x)\,dx\)</span></div>
+    <div class="rv-row rv-area"><span class="rv-what">Área, eje OX</span><span class="rv-piece">bandas</span><span class="rv-math">\(\displaystyle A=\int_a^b 2\pi\, f(x)\sqrt{1+f'(x)^2}\,dx\)</span></div>
+    <div class="rv-row rv-area"><span class="rv-what">Área, eje OY</span><span class="rv-piece">bandas</span><span class="rv-math">\(\displaystyle A=\int_a^b 2\pi\, x\sqrt{1+f'(x)^2}\,dx\)</span></div>
+  </div>
+  <div class="rv-prose"><p class="rv-small">En los volúmenes, la región es la que queda entre la gráfica y el eje \(OX\). Para girar alrededor del eje \(OY\) suponemos \(0\le a<b\), y en las capas usamos \(|f(x)|\) como altura.</p></div>
+</section>
+
+<!-- ================= RETOS ================= -->
+<section id="retos" aria-labelledby="rv-t5">
+  <h2 class="rv-h2 rv-h2-plain" id="rv-t5">Retos para el laboratorio</h2>
+  <ol class="rv-retos">
+    <li class="rv-arc"><p><strong>Precisión.</strong> ¿Cuántos trozos hacen falta para que el error en la longitud de la catenaria sea menor que 0,01? ¿Y menor que 0,001? ¿Qué le pasa al error cuando duplicas \(n\)?</p>
+      <button type="button" class="rv-try" data-try="arc:catenaria">Abrir la catenaria</button></li>
+    <li class="rv-vol"><p><strong>La esfera de Arquímedes.</strong> Gira \(\sqrt{1-x^2}\) entre \(-1\) y \(1\) alrededor del eje \(OX\). Comprueba que el volumen es \(\frac43\pi\approx 4{,}1888\) y el área, \(4\pi\approx 12{,}566\).</p>
+      <button type="button" class="rv-try" data-try="vol:esfera">Ver el volumen</button><button type="button" class="rv-try rv-area" data-try="area:esfera">Ver el área</button></li>
+    <li class="rv-area"><p><strong>Cuando la trampa no falla.</strong> En el laboratorio 3, elige el cilindro, \(f(x)=1\), y cambia a «Cilindros». ¿Por qué ahora sí sale el área correcta?</p>
+      <button type="button" class="rv-try" data-try="area:cilindro" data-mode="cyl">Probar con el cilindro</button></li>
+    <li class="rv-vol"><p><strong>La trompeta de Gabriel.</strong> Gira \(f(x)=1/x\) entre \(1\) y \(b\) alrededor del eje \(OX\) y ve aumentando \(b\). El volumen nunca pasa de \(\pi\), pero el área crece sin parar: se puede llenar de pintura, pero no se puede pintar.</p>
+      <button type="button" class="rv-try" data-try="vol:gabriel">Ver el volumen</button><button type="button" class="rv-try rv-area" data-try="area:gabriel">Ver el área</button></li>
+    <li class="rv-vol"><p><strong>Inventa tu jarrón.</strong> Escribe tu propia función en el laboratorio 2, por ejemplo \(1+0{,}4\operatorname{sen}(2x)\) entre \(0\) y \(\pi\), y calcula cuánta agua cabe.</p>
+      <button type="button" class="rv-try" data-try="vol:jarron">Abrir el jarrón</button></li>
+  </ol>
+  <p class="rv-foot">Los valores reales de los laboratorios se calculan con 20 000 trozos. En los ejemplos de los apuntes aparece también su valor exacto.</p>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  var TAU = 2 * Math.PI;
+  var NMAX = 100;     // máximo de trozos en los deslizadores
+  var NFINE = 20000;  // trozos con los que se calcula el valor «real» (el límite)
+  var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  /* =========================================================
+     1. Lector de funciones: convierte «x^2 + 3sen(x)» en una
+        función de JavaScript, sin usar eval.
+     ========================================================= */
+  function ParseError(msg) { this.message = msg; }
+
+  function safeSqrt(v) { return (v < 0 && v > -1e-12) ? 0 : Math.sqrt(v); }
+
+  var FUNCS = {
+    sin: Math.sin, sen: Math.sin, cos: Math.cos, tan: Math.tan, tg: Math.tan,
+    asin: Math.asin, arcsin: Math.asin, arcsen: Math.asin,
+    acos: Math.acos, arccos: Math.acos,
+    atan: Math.atan, arctan: Math.atan, arctg: Math.atan,
+    sinh: Math.sinh, senh: Math.sinh, cosh: Math.cosh, tanh: Math.tanh,
+    exp: Math.exp, ln: Math.log, log: Math.log,
+    sqrt: safeSqrt, raiz: safeSqrt, abs: Math.abs
+  };
+  var CONSTS = { pi: Math.PI, '\u03c0': Math.PI, e: Math.E };
+  var NAMES = Object.keys(FUNCS).concat(Object.keys(CONSTS), ['x'])
+    .sort(function (p, q) { return q.length - p.length; });
+
+  function normalize(s) {
+    return String(s).toLowerCase()
+      .replace(/[\u2212\u2013\u2014]/g, '-')
+      .replace(/[\u00b7\u00d7\u22c5\u2219]/g, '*')
+      .replace(/\u00f7/g, '/')
+      .replace(/\u00b2/g, '^2').replace(/\u00b3/g, '^3')
+      .replace(/\u221a/g, 'sqrt')
+      .replace(/[\u00ed\u00ec]/g, 'i')
+      .replace(/\*\*/g, '^')
+      .replace(/,/g, '.');
+  }
+
+  function tokenize(s) {
+    var out = [], i = 0, c, j, k, m, txt;
+    while (i < s.length) {
+      c = s.charAt(i);
+      if (c === ' ' || c === '\t' || c === '\n') { i++; continue; }
+      if ((c >= '0' && c <= '9') || c === '.') {
+        j = i;
+        while (j < s.length && /[0-9.]/.test(s.charAt(j))) j++;
+        txt = s.slice(i, j);
+        if (txt === '.' || txt.split('.').length > 2) throw new ParseError('El número «' + txt + '» está mal escrito.');
+        out.push({ t: 'num', v: parseFloat(txt), s: txt });
+        i = j; continue;
+      }
+      if (/[a-z\u03c0]/.test(c)) {
+        m = null;
+        for (k = 0; k < NAMES.length; k++) {
+          if (s.substr(i, NAMES[k].length) === NAMES[k]) { m = NAMES[k]; break; }
+        }
+        if (!m) {
+          j = i;
+          while (j < s.length && /[a-z]/.test(s.charAt(j))) j++;
+          throw new ParseError('No reconozco «' + s.slice(i, j) + '». La variable es x, y las funciones se escriben sen, cos, exp, ln, sqrt…');
+        }
+        if (m === 'x') out.push({ t: 'x', s: 'x' });
+        else if (Object.prototype.hasOwnProperty.call(FUNCS, m)) out.push({ t: 'fn', v: m, s: m });
+        else out.push({ t: 'num', v: CONSTS[m], s: m });
+        i += m.length; continue;
+      }
+      if ('+-*/^()'.indexOf(c) >= 0) { out.push({ t: c, s: c }); i++; continue; }
+      if (c === '[') { out.push({ t: '(', s: c }); i++; continue; }
+      if (c === ']') { out.push({ t: ')', s: c }); i++; continue; }
+      throw new ParseError('No sé qué significa el símbolo «' + c + '».');
+    }
+    return out;
+  }
+
+  function parseTokens(toks) {
+    var p = 0;
+    function peek() { return toks[p]; }
+    function startsFactor(t) { return !!t && (t.t === 'num' || t.t === 'x' || t.t === 'fn' || t.t === '('); }
+    function expr() {
+      var node = term(), t, r;
+      while ((t = peek()) && (t.t === '+' || t.t === '-')) {
+        p++; r = term();
+        node = (t.t === '+') ? add(node, r) : sub(node, r);
+      }
+      return node;
+    }
+    function term() {
+      var node = unary(), t, r;
+      for (;;) {
+        t = peek();
+        if (t && (t.t === '*' || t.t === '/')) {
+          p++; r = unary();
+          node = (t.t === '*') ? mul(node, r) : div(node, r);
+        } else if (startsFactor(t)) {
+          r = power(); node = mul(node, r);         // multiplicación implícita: 2x, 3sen(x)
+        } else break;
+      }
+      return node;
+    }
+    function unary() {
+      var t = peek(), u;
+      if (t && t.t === '-') { p++; u = unary(); return function (x) { return -u(x); }; }
+      if (t && t.t === '+') { p++; return unary(); }
+      return power();
+    }
+    function power() {
+      var base = primary(), t = peek(), ex;
+      if (t && t.t === '^') { p++; ex = unary(); return function (x) { return Math.pow(base(x), ex(x)); }; }
+      return base;
+    }
+    function primary() {
+      var t = toks[p], v, fn, arg, e, nx;
+      if (!t) throw new ParseError('La expresión está incompleta: falta algo al final.');
+      if (t.t === 'num') { p++; v = t.v; return function () { return v; }; }
+      if (t.t === 'x') { p++; return function (x) { return x; }; }
+      if (t.t === 'fn') {
+        p++; fn = FUNCS[t.v]; nx = peek();
+        if (!nx) throw new ParseError('A «' + t.v + '» le falta el argumento, por ejemplo ' + t.v + '(x).');
+        arg = (nx.t === '(') ? primary() : power();
+        return function (x) { return fn(arg(x)); };
+      }
+      if (t.t === '(') {
+        p++; e = expr();
+        if (!peek() || peek().t !== ')') throw new ParseError('Falta cerrar un paréntesis.');
+        p++; return e;
+      }
+      if (t.t === ')') throw new ParseError('Sobra un paréntesis de cierre, o falta algo antes de él.');
+      throw new ParseError('Hay un «' + t.s + '» fuera de lugar.');
+    }
+    var root = expr();
+    if (p < toks.length) {
+      throw new ParseError(toks[p].t === ')' ? 'Sobra un paréntesis de cierre.' : 'Hay un «' + toks[p].s + '» fuera de lugar.');
+    }
+    return root;
+  }
+  function add(a, b) { return function (x) { return a(x) + b(x); }; }
+  function sub(a, b) { return function (x) { return a(x) - b(x); }; }
+  function mul(a, b) { return function (x) { return a(x) * b(x); }; }
+  function div(a, b) { return function (x) { return a(x) / b(x); }; }
+
+  function compileFn(src) {
+    var s = normalize(src).trim();
+    if (!s) throw new ParseError('Escribe una función de x, por ejemplo x^2.');
+    return parseTokens(tokenize(s));
+  }
+  function evalNumber(src, name) {
+    var s = normalize(src).trim(), toks, v, i;
+    if (!s) throw new ParseError('Falta el valor de ' + name + '.');
+    toks = tokenize(s);
+    for (i = 0; i < toks.length; i++) {
+      if (toks[i].t === 'x') throw new ParseError('El extremo ' + name + ' tiene que ser un número (vale pi, 2pi o 1/2, pero no x).');
+    }
+    v = parseTokens(toks)(0);
+    if (!isFinite(v)) throw new ParseError('El extremo ' + name + ' no es un número válido.');
+    return v;
+  }
+
+  /* =========================================================
+     2. Las sumas (aproximaciones) y sus límites
+     ========================================================= */
+  function xAt(a, b, n, i) { return i === n ? b : a + (b - a) * i / n; }
+  function sp(x0, x1, mode) { return mode === 'L' ? x0 : (mode === 'R' ? x1 : 0.5 * (x0 + x1)); }
+
+  function sumChords(f, a, b, n) {
+    var L = 0, x0 = a, y0 = f(a), x1, y1, dx, dy, i;
+    for (i = 1; i <= n; i++) {
+      x1 = xAt(a, b, n, i); y1 = f(x1); dx = x1 - x0; dy = y1 - y0;
+      L += Math.sqrt(dx * dx + dy * dy); x0 = x1; y0 = y1;
+    }
+    return L;
+  }
+  function sumStairs(f, a, b, n) {
+    var L = 0, x0 = a, y0 = f(a), x1, y1, i;
+    for (i = 1; i <= n; i++) {
+      x1 = xAt(a, b, n, i); y1 = f(x1);
+      L += Math.abs(x1 - x0) + Math.abs(y1 - y0); x0 = x1; y0 = y1;
+    }
+    return L;
+  }
+  function sumDiscs(f, a, b, n, mode) {
+    var V = 0, x0, x1, r, i;
+    for (i = 0; i < n; i++) {
+      x0 = xAt(a, b, n, i); x1 = xAt(a, b, n, i + 1); r = f(sp(x0, x1, mode));
+      V += Math.PI * r * r * (x1 - x0);
+    }
+    return V;
+  }
+  function sumShells(f, a, b, n, mode) {
+    var V = 0, x0, x1, h, i;
+    for (i = 0; i < n; i++) {
+      x0 = xAt(a, b, n, i); x1 = xAt(a, b, n, i + 1); h = Math.abs(f(sp(x0, x1, mode)));
+      V += Math.PI * (x1 * x1 - x0 * x0) * h;   // = 2π · x_medio · Δx · altura
+    }
+    return V;
+  }
+  function sumBands(f, a, b, n, axis) {
+    var A = 0, x0 = a, y0 = f(a), x1, y1, dx, dy, r0, r1, i;
+    for (i = 1; i <= n; i++) {
+      x1 = xAt(a, b, n, i); y1 = f(x1); dx = x1 - x0; dy = y1 - y0;
+      r0 = axis === 'x' ? Math.abs(y0) : Math.abs(x0);
+      r1 = axis === 'x' ? Math.abs(y1) : Math.abs(x1);
+      A += Math.PI * (r0 + r1) * Math.sqrt(dx * dx + dy * dy);   // área lateral de un tronco de cono
+      x0 = x1; y0 = y1;
+    }
+    return A;
+  }
+  function sumCyls(f, a, b, n, axis) {
+    var A = 0, x0 = a, y0 = f(a), x1, y1, xm, i;
+    for (i = 1; i <= n; i++) {
+      x1 = xAt(a, b, n, i); y1 = f(x1); xm = 0.5 * (x0 + x1);
+      if (axis === 'x') A += TAU * Math.abs(f(xm)) * (x1 - x0);
+      else A += TAU * Math.abs(xm) * Math.abs(y1 - y0);
+      x0 = x1; y0 = y1;
+    }
+    return A;
+  }
+  function seq(fn) { var out = [], k; for (k = 1; k <= NMAX; k++) out.push(fn(k)); return out; }
+
+  function validate(f, a, b, needPositive) {
+    var N = 600, i, x, y, big = 0;
+    if (!(b > a)) return 'El extremo b tiene que ser mayor que a.';
+    if (b - a > 1e4) return 'El intervalo es demasiado largo para dibujarlo bien. Prueba con uno más corto.';
+    if (needPositive && a < 0) return 'Para girar alrededor del eje OY hace falta x ≥ 0: pon a ≥ 0.';
+    for (i = 0; i <= N; i++) {
+      x = xAt(a, b, N, i); y = f(x);
+      if (!isFinite(y)) return 'La función no está definida en todo el intervalo (falla cerca de x = ' + fmtShort(x) + '). Prueba con otro intervalo.';
+      if (Math.abs(y) > big) big = Math.abs(y);
+    }
+    if (big > 1e5) return 'La función se hace demasiado grande en este intervalo. Prueba con otro.';
+    return null;
+  }
+
+  /* =========================================================
+     3. Formato y colores
+     ========================================================= */
+  function fmt(v, d) {
+    if (!isFinite(v)) return '—';
+    var s = Math.abs(v) >= 1000 ? v.toFixed(1) : v.toFixed(d === undefined ? 4 : d);
+    if (/^-0[.0]*$/.test(s)) s = s.slice(1);
+    return s.replace('.', ',').replace('-', '\u2212');
+  }
+  function fmtShort(v) { return String(Math.round(v * 1000) / 1000).replace('.', ',').replace('-', '\u2212'); }
+  function fmtTick(v, step) {
+    var d = Math.max(0, -Math.floor(Math.log(step) / Math.LN10 + 1e-9));
+    var s = v.toFixed(Math.min(d, 6));
+    if (/^-0[.0]*$/.test(s)) s = s.slice(1);
+    return s.replace('.', ',').replace('-', '\u2212');
+  }
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+  function toRGB(s) {
+    s = String(s || '').trim();
+    if (s.charAt(0) === '#') {
+      var h = s.slice(1);
+      if (h.length === 3) h = h.charAt(0) + h.charAt(0) + h.charAt(1) + h.charAt(1) + h.charAt(2) + h.charAt(2);
+      var n = parseInt(h.slice(0, 6), 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+    var m = s.match(/rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)(?:[\s,\/]+([\d.]+%?))?/);
+    if (!m) return [128, 128, 128];
+    return [+m[1], +m[2], +m[3]];
+  }
+  function alphaOf(s) {
+    s = String(s);
+    if (/transparent/.test(s)) return 0;
+    var m = s.match(/^rgba\([^,]+,[^,]+,[^,]+,\s*([\d.]+%?)\s*\)/) || s.match(/\/\s*([\d.]+%?)\s*\)\s*$/);
+    if (!m) return 1;
+    return m[1].slice(-1) === '%' ? parseFloat(m[1]) / 100 : +m[1];
+  }
+  function rgba(s, a) { var c = toRGB(s); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+  function mix(s, t, k) {
+    var c = toRGB(s), d = toRGB(t);
+    return 'rgb(' + Math.round(c[0] + (d[0] - c[0]) * k) + ',' + Math.round(c[1] + (d[1] - c[1]) * k) + ',' + Math.round(c[2] + (d[2] - c[2]) * k) + ')';
+  }
+  function isDarkInk(ink) { var c = toRGB(ink); return (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255 > 0.55; }
+  function bgOf(el, dark) {
+    while (el && el.nodeType === 1) {
+      var bg = getComputedStyle(el).backgroundColor;
+      if (bg && alphaOf(bg) > 0.5) return bg;
+      el = el.parentElement;
+    }
+    return dark ? '#1e1f22' : '#ffffff';
+  }
+  function theme(el) {
+    var cs = getComputedStyle(el), ink = cs.color, dark = isDarkInk(ink);
+    function v(name, fb) { var x = cs.getPropertyValue(name); return (x && x.trim()) || fb; }
+    return {
+      dark: dark, ink: ink, font: cs.fontFamily || 'sans-serif',
+      hand: v('--rv-hand', 'cursive'),
+      grid: rgba(ink, dark ? 0.1 : 0.08), axis: rgba(ink, 0.55), muted: rgba(ink, 0.72),
+      faint: rgba(ink, 0.3), curve: rgba(ink, 0.9),
+      acc: v('--acc', '#c9372e'), rojo: v('--rv-rojo', '#c9372e'), azul: v('--rv-azul', '#2b61b4'),
+      naranja: v('--rv-naranja', '#dc7414'), violeta: v('--rv-violeta', '#6f4fc0')
+    };
+  }
+
+  /* =========================================================
+     4. Lienzo 2D con ejes
+     ========================================================= */
+  function Plot(canvas, ratio, hmin, hmax) {
+    this.cv = canvas; this.ctx = canvas.getContext('2d');
+    this.ratio = ratio; this.hmin = hmin; this.hmax = hmax;
+  }
+  Plot.prototype.size = function (dark) {
+    var w = this.cv.parentNode.clientWidth || 320;
+    var h = Math.round(Math.max(this.hmin, Math.min(this.hmax, w * this.ratio)));
+    var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    var W = Math.round(w * dpr), H = Math.round(h * dpr);
+    if (this.cv.width !== W || this.cv.height !== H) { this.cv.width = W; this.cv.height = H; }
+    this.cv.style.height = h + 'px';
+    this.w = w; this.h = h;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.ctx.clearRect(0, 0, w, h);
+    this.bg = bgOf(this.cv.parentNode, dark);
+  };
+  Plot.prototype.setView = function (xmin, xmax, ymin, ymax) {
+    var pad = { l: 42, r: 14, t: 16, b: 36 };
+    var W = Math.max(20, this.w - pad.l - pad.r), H = Math.max(20, this.h - pad.t - pad.b);
+    if (!(xmax - xmin > 1e-12)) { xmin -= 1; xmax += 1; }
+    if (!(ymax - ymin > 1e-12)) { ymin -= 1; ymax += 1; }
+    var xr = xmax - xmin, yr = ymax - ymin, sx = W / xr, sy = H / yr, q = sx / sy, s, ex, ey;
+    this.equal = q > 1 / 3.2 && q < 3.2;
+    if (this.equal) {
+      s = Math.min(sx, sy); ex = (W / s - xr) / 2; ey = (H / s - yr) / 2;
+      xmin -= ex; xmax += ex; ymin -= ey; ymax += ey; sx = sy = s;
+    }
+    this.xmin = xmin; this.xmax = xmax; this.ymin = ymin; this.ymax = ymax;
+    this.sx = sx; this.sy = sy; this.pad = pad;
+  };
+  Plot.prototype.X = function (x) { return this.pad.l + (x - this.xmin) * this.sx; };
+  Plot.prototype.Y = function (y) { return this.pad.t + (this.ymax - y) * this.sy; };
+  Plot.prototype.baseY = function () { return (this.ymin <= 0 && this.ymax >= 0) ? this.Y(0) : this.h - this.pad.b; };
+  Plot.prototype.baseX = function () { return (this.xmin <= 0 && this.xmax >= 0) ? this.X(0) : this.pad.l; };
+  function niceStep(range, target) {
+    var raw = range / target, p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), m = raw / p;
+    return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p;
+  }
+  Plot.prototype.grid = function (th) {
+    var c = this.ctx, p = this.pad, x, y, X, Y, k;
+    var sx = niceStep(this.xmax - this.xmin, Math.max(3, (this.w - p.l - p.r) / 80));
+    var sy = niceStep(this.ymax - this.ymin, Math.max(3, (this.h - p.t - p.b) / 56));
+    if (this.equal) sx = sy = Math.max(sx, sy);
+    var bx = this.baseX(), by = this.baseY();
+    c.save();
+    c.strokeStyle = th.grid; c.lineWidth = 1; c.beginPath();
+    for (k = Math.ceil(this.xmin / sx); k * sx <= this.xmax; k++) { X = Math.round(this.X(k * sx)) + 0.5; c.moveTo(X, p.t); c.lineTo(X, this.h - p.b); }
+    for (k = Math.ceil(this.ymin / sy); k * sy <= this.ymax; k++) { Y = Math.round(this.Y(k * sy)) + 0.5; c.moveTo(p.l, Y); c.lineTo(this.w - p.r, Y); }
+    c.stroke();
+    c.strokeStyle = th.axis; c.lineWidth = 1.2; c.beginPath();
+    c.moveTo(p.l, by); c.lineTo(this.w - p.r, by); c.moveTo(bx, p.t); c.lineTo(bx, this.h - p.b); c.stroke();
+    c.fillStyle = th.muted; c.font = '11px ' + th.font;
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (k = Math.ceil(this.xmin / sx); k * sx <= this.xmax; k++) {
+      x = k * sx;
+      if (k === 0 && bx !== p.l) continue;
+      c.fillText(fmtTick(x, sx), this.X(x), Math.min(by + 4, this.h - 14));
+    }
+    c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (k = Math.ceil(this.ymin / sy); k * sy <= this.ymax; k++) {
+      y = k * sy;
+      if (k === 0) continue;
+      c.fillText(fmtTick(y, sy), Math.max(bx - 5, 30), this.Y(y));
+    }
+    c.restore();
+  };
+  Plot.prototype.path = function (pts) {
+    var c = this.ctx, first = true, i, q;
+    c.beginPath();
+    for (i = 0; i < pts.length; i++) {
+      q = pts[i];
+      if (!isFinite(q[1])) { first = true; continue; }
+      if (first) { c.moveTo(this.X(q[0]), this.Y(q[1])); first = false; } else c.lineTo(this.X(q[0]), this.Y(q[1]));
+    }
+  };
+  Plot.prototype.region = function (pts) {   // región entre la curva y el eje OX
+    var c = this.ctx, i;
+    c.beginPath(); c.moveTo(this.X(pts[0][0]), this.Y(0));
+    for (i = 0; i < pts.length; i++) c.lineTo(this.X(pts[i][0]), this.Y(pts[i][1]));
+    c.lineTo(this.X(pts[pts.length - 1][0]), this.Y(0)); c.closePath();
+  };
+  Plot.prototype.abLabels = function (a, b, th) {
+    var c = this.ctx, by = this.baseY(), self = this, yl = Math.min(by + 17, this.h - 17);
+    c.save();
+    c.font = 'italic 15px Georgia, "Times New Roman", serif'; c.textAlign = 'center'; c.textBaseline = 'top';
+    c.strokeStyle = th.ink; c.fillStyle = th.ink; c.lineWidth = 1.6;
+    [[a, 'a'], [b, 'b']].forEach(function (q) {
+      var X = self.X(q[0]);
+      c.beginPath(); c.moveTo(X, by - 5); c.lineTo(X, by + 5); c.stroke();
+      c.fillText(q[1], X, yl);
+    });
+    c.restore();
+  };
+  Plot.prototype.rotAxis = function (axis, th) {
+    var c = this.ctx, p = this.pad, X, Y;
+    c.save();
+    c.strokeStyle = th.rojo; c.lineWidth = 2.2; c.setLineDash([9, 6]); c.beginPath();
+    if (axis === 'x') { Y = this.Y(0); c.moveTo(p.l, Y); c.lineTo(this.w - p.r, Y); }
+    else { X = this.X(0); c.moveTo(X, p.t); c.lineTo(X, this.h - p.b); }
+    c.stroke(); c.setLineDash([]);
+    c.fillStyle = th.rojo; c.font = '700 15px ' + th.hand;
+    if (axis === 'x') { c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText('eje de giro', this.w - p.r - 2, this.Y(0) - 5); }
+    else { c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText('eje de giro', this.X(0) + 7, p.t + 1); }
+    c.restore();
+  };
+  function dot(c, X, Y, r, fill, ring) {
+    c.beginPath(); c.arc(X, Y, r, 0, TAU); c.fillStyle = fill; c.fill();
+    c.lineWidth = 1.5; c.strokeStyle = ring; c.stroke();
+  }
+  function sample(f, a, b, N) { var pts = [], i, x; for (i = 0; i <= N; i++) { x = xAt(a, b, N, i); pts.push([x, f(x)]); } return pts; }
+  function yRange(pts) {
+    var lo = Infinity, hi = -Infinity, i, y;
+    for (i = 0; i < pts.length; i++) { y = pts[i][1]; if (isFinite(y)) { if (y < lo) lo = y; if (y > hi) hi = y; } }
+    if (!isFinite(lo)) { lo = 0; hi = 1; }
+    return [lo, hi];
+  }
+
+  /* =========================================================
+     5. Vista 3D (three.js) de sólidos y superficies de revolución
+     ========================================================= */
+  function Scene3D(host) {
+    var T = window.THREE;
+    function fail(msg) {
+      var p = document.createElement('p'); p.className = 'rv-no3d'; p.textContent = msg;
+      host.innerHTML = ''; host.appendChild(p); host.classList.add('is-off'); return null;
+    }
+    if (!T) return fail('No se ha podido cargar la vista 3D. Comprueba la conexión y recarga la página.');
+    var renderer;
+    try { renderer = new T.WebGLRenderer({ antialias: true, alpha: true }); }
+    catch (e) { return fail('Este navegador no puede mostrar gráficos 3D (WebGL está desactivado).'); }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setClearColor(0x000000, 0);
+    renderer.localClippingEnabled = true;
+    var cv = renderer.domElement;
+    cv.setAttribute('tabindex', '0');
+    cv.setAttribute('role', 'img');
+    cv.setAttribute('aria-label', 'Vista 3D. Arrástrala o usa las flechas del teclado para girarla.');
+    cv.style.touchAction = 'pan-y';
+    host.appendChild(cv);
+
+    var scene = new T.Scene();
+    var cam = new T.PerspectiveCamera(30, 1, 0.01, 1000);
+    scene.add(cam);
+    scene.add(new T.AmbientLight(0xffffff, 0.5));
+    var target = new T.Object3D(); scene.add(target);
+    var key = new T.DirectionalLight(0xffffff, 0.75); key.position.set(1.2, 2.4, 2.2); key.target = target; cam.add(key);
+    var fill = new T.DirectionalLight(0xffffff, 0.22); fill.position.set(-2, -1.4, 0.6); fill.target = target; cam.add(fill);
+
+    var planes = [new T.Plane(new T.Vector3(0, 0, -1), 0), new T.Plane(new T.Vector3(1, 0, 0), 0)];
+    var mPieces = new T.MeshPhongMaterial({ vertexColors: true, side: T.DoubleSide, shininess: 30, specular: 0x1c1c1c, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+    var mCut = new T.MeshPhongMaterial({ vertexColors: true, side: T.DoubleSide, shininess: 0, specular: 0x000000, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+    var mGhost = new T.MeshPhongMaterial({ color: 0x808080, transparent: true, opacity: 0.14, depthWrite: false, side: T.DoubleSide, shininess: 0 });
+    var mRim = new T.LineBasicMaterial({ color: 0x222222, transparent: true, opacity: 0.42 });
+    var mEdge = new T.LineBasicMaterial({ color: 0x222222, transparent: true, opacity: 0.7 });
+    var mCurve = new T.LineBasicMaterial({ color: 0x222222 });
+    var mAxis = new T.LineDashedMaterial({ color: 0xcc3333, dashSize: 0.1, gapSize: 0.06 });
+
+    var S = { axis: 'x', phi0: 0, Phi: TAU, pieces: [], solid: true, cA: [0.2, 0.4, 0.8], cB: [0.6, 0.7, 0.9], K: 64, ghost: true };
+    var objs = {}, center = new T.Vector3(), radius = 1, dist = 4;
+    var AZ0 = 0.62, EL0 = 0.42, az = AZ0, el = EL0, clipKey = '', raf = 0;
+
+    function put(name, obj, order) {
+      var old = objs[name];
+      if (old) { scene.remove(old); old.geometry.dispose(); }
+      objs[name] = obj || null;
+      if (obj) { obj.renderOrder = order || 0; scene.add(obj); }
+      return obj;
+    }
+    // (s, r, φ) → punto 3D. s = coordenada a lo largo del eje, r = distancia al eje
+    function pt(s, r, ph) {
+      var c = Math.cos(ph), n = Math.sin(ph);
+      return S.axis === 'x' ? [s, r * c, -r * n] : [r * c, s, -r * n];
+    }
+    function tg(ph) { var c = Math.cos(ph), n = Math.sin(ph); return S.axis === 'x' ? [0, -n, -c] : [-n, 0, -c]; }
+
+    function Buf() { this.p = []; this.n = []; this.c = []; }
+    Buf.prototype.v = function (P, N, C) { this.p.push(P[0], P[1], P[2]); this.n.push(N[0], N[1], N[2]); this.c.push(C[0], C[1], C[2]); };
+    Buf.prototype.tri = function (A, B, C, nA, nB, nC, col) {
+      var ux = B[0] - A[0], uy = B[1] - A[1], uz = B[2] - A[2], vx = C[0] - A[0], vy = C[1] - A[1], vz = C[2] - A[2];
+      var gx = uy * vz - uz * vy, gy = uz * vx - ux * vz, gz = ux * vy - uy * vx;
+      if (gx * gx + gy * gy + gz * gz < 1e-26) return;
+      var d = gx * (nA[0] + nB[0] + nC[0]) + gy * (nA[1] + nB[1] + nC[1]) + gz * (nA[2] + nB[2] + nC[2]);
+      if (d >= 0) { this.v(A, nA, col); this.v(B, nB, col); this.v(C, nC, col); }
+      else { this.v(A, nA, col); this.v(C, nC, col); this.v(B, nB, col); }
+    };
+    Buf.prototype.geom = function () {
+      if (!this.p.length) return null;
+      var g = new T.BufferGeometry();
+      g.setAttribute('position', new T.Float32BufferAttribute(this.p, 3));
+      g.setAttribute('normal', new T.Float32BufferAttribute(this.n, 3));
+      g.setAttribute('color', new T.Float32BufferAttribute(this.c, 3));
+      return g;
+    };
+    function mesh(buf, mat) { var g = buf.geom(); return g ? new T.Mesh(g, mat) : null; }
+    function lines(arr, mat) {
+      if (!arr.length) return null;
+      var g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(arr, 3));
+      return new T.LineSegments(g, mat);
+    }
+    // Hace girar el segmento (s0,r0)–(s1,r1) entre los ángulos A y B
+    function strip(buf, s0, r0, s1, r1, ns, nr, K, A, B, col) {
+      if (r0 <= 0 && r1 <= 0) return;
+      for (var k = 0; k < K; k++) {
+        var p0 = A + (B - A) * k / K, p1 = A + (B - A) * (k + 1) / K;
+        var P0 = pt(s0, r0, p0), P1 = pt(s1, r1, p0), P2 = pt(s1, r1, p1), P3 = pt(s0, r0, p1);
+        var N0 = pt(ns, nr, p0), N1 = pt(ns, nr, p1);
+        buf.tri(P0, P1, P2, N0, N0, N1, col);
+        buf.tri(P0, P2, P3, N0, N1, N1, col);
+      }
+    }
+    function solidPiece(buf, s0, s1, r0, r1, K, A, B, col) {      // rectángulo que gira: disco o capa
+      var V = [[s0, r0], [s1, r0], [s1, r1], [s0, r1]], e, P, Q, ds, dr, len;
+      for (e = 0; e < 4; e++) {
+        P = V[e]; Q = V[(e + 1) % 4]; ds = Q[0] - P[0]; dr = Q[1] - P[1]; len = Math.sqrt(ds * ds + dr * dr);
+        if (len < 1e-12) continue;
+        strip(buf, P[0], P[1], Q[0], Q[1], dr / len, -ds / len, K, A, B, col);
+      }
+    }
+    function surfPiece(buf, s0, r0, s1, r1, K, A, B, col) {       // segmento que gira: banda
+      var ds = s1 - s0, dr = r1 - r0, len = Math.sqrt(ds * ds + dr * dr), ns, nr;
+      if (len < 1e-12) return;
+      ns = -dr / len; nr = ds / len;
+      if (nr < 0 || (nr === 0 && ns < 0)) { ns = -ns; nr = -nr; }
+      strip(buf, s0, r0, s1, r1, ns, nr, K, A, B, col);
+    }
+    function circle(arr, s, r, K, A, B) {
+      for (var k = 0; k < K; k++) {
+        var P = pt(s, r, A + (B - A) * k / K), Q = pt(s, r, A + (B - A) * (k + 1) / K);
+        arr.push(P[0], P[1], P[2], Q[0], Q[1], Q[2]);
+      }
+    }
+    function rgbf(col) { var c = new T.Color(col); return [c.r, c.g, c.b]; }
+    function lighten(c, k) { return [c[0] + (1 - c[0]) * k, c[1] + (1 - c[1]) * k, c[2] + (1 - c[2]) * k]; }
+
+    function applyClip() {
+      var full = S.Phi >= TAU - 1e-6, k = full ? 'none' : (S.Phi > Math.PI ? 'u' : 'i'), t0, t1;
+      if (!full) {
+        t0 = tg(S.phi0); t1 = tg(S.phi0 + S.Phi);
+        planes[0].normal.set(t0[0], t0[1], t0[2]); planes[0].constant = 0;
+        planes[1].normal.set(-t1[0], -t1[1], -t1[2]); planes[1].constant = 0;
+      }
+      if (k !== clipKey) {
+        [mPieces, mRim].forEach(function (m) {
+          m.clippingPlanes = full ? null : planes; m.clipIntersection = (k === 'u'); m.needsUpdate = true;
+        });
+        clipKey = k;
+      }
+    }
+    function buildCut() {
+      var b = new Buf(), edges = [], full = S.Phi >= TAU - 1e-6, angs = [S.phi0];
+      if (S.Phi > 1e-3 && !full) angs.push(S.phi0 + S.Phi);
+      angs.forEach(function (ph, j) {
+        var t = tg(ph), nrm = j === 0 ? [-t[0], -t[1], -t[2]] : t;
+        S.pieces.forEach(function (q, i) {
+          if (S.solid) {
+            var c0 = pt(q.s0, q.r0, ph), c1 = pt(q.s1, q.r0, ph), c2 = pt(q.s1, q.r1, ph), c3 = pt(q.s0, q.r1, ph);
+            if (!full) {
+              var col = lighten(i % 2 ? S.cB : S.cA, 0.32);
+              b.tri(c0, c1, c2, nrm, nrm, nrm, col); b.tri(c0, c2, c3, nrm, nrm, nrm, col);
+            }
+            edges.push(c0[0], c0[1], c0[2], c1[0], c1[1], c1[2], c1[0], c1[1], c1[2], c2[0], c2[1], c2[2],
+              c2[0], c2[1], c2[2], c3[0], c3[1], c3[2], c3[0], c3[1], c3[2], c0[0], c0[1], c0[2]);
+          } else {
+            var e0 = pt(q.s0, q.r0, ph), e1 = pt(q.s1, q.r1, ph);
+            edges.push(e0[0], e0[1], e0[2], e1[0], e1[1], e1[2]);
+          }
+        });
+      });
+      put('cut', mesh(b, mCut), 0);
+      put('edges', lines(edges, mEdge), 4);
+    }
+    function fit() {
+      var w = host.clientWidth || 300, h = host.clientHeight || 300;
+      cam.aspect = w / h;
+      var vf = cam.fov * Math.PI / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * cam.aspect);
+      dist = radius / Math.sin(Math.min(vf, hf) / 2) * 1.02;
+      cam.near = dist / 50; cam.far = dist * 6;
+      cam.updateProjectionMatrix();
+      place();
+    }
+    function place() {
+      var ce = Math.cos(el);
+      cam.position.set(center.x + dist * Math.sin(az) * ce, center.y + dist * Math.sin(el), center.z + dist * Math.cos(az) * ce);
+      cam.lookAt(center); target.position.copy(center);
+    }
+    function render() {
+      if (raf) return;
+      raf = requestAnimationFrame(function () { raf = 0; renderer.render(scene, cam); });
+    }
+    function resize() {
+      var w = host.clientWidth, h = host.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false); fit(); render();
+    }
+    function clampEl(v) { return Math.max(-1.35, Math.min(1.45, v)); }
+
+    var drag = null;
+    cv.addEventListener('pointerdown', function (e) {
+      drag = { x: e.clientX, y: e.clientY, id: e.pointerId, touch: e.pointerType === 'touch' };
+      if (cv.setPointerCapture) { try { cv.setPointerCapture(e.pointerId); } catch (err) { /* nada */ } }
+      host.classList.add('is-drag');
+    });
+    cv.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      drag.x = e.clientX; drag.y = e.clientY;
+      az -= dx * 0.01; if (!drag.touch) el = clampEl(el + dy * 0.008);
+      place(); render();
+    });
+    function endDrag() { drag = null; host.classList.remove('is-drag'); }
+    cv.addEventListener('pointerup', endDrag);
+    cv.addEventListener('pointercancel', endDrag);
+    cv.addEventListener('keydown', function (e) {
+      var k = e.key, st = 0.12;
+      if (k === 'ArrowLeft') az += st; else if (k === 'ArrowRight') az -= st;
+      else if (k === 'ArrowUp') el = clampEl(el + st); else if (k === 'ArrowDown') el = clampEl(el - st);
+      else return;
+      e.preventDefault(); place(); render();
+    });
+    var rb = document.createElement('button');
+    rb.type = 'button'; rb.className = 'rv-reset'; rb.textContent = 'Vista inicial';
+    rb.addEventListener('click', function () { az = AZ0; el = EL0; place(); render(); });
+    host.appendChild(rb);
+
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(host);
+    else window.addEventListener('resize', resize);
+
+    var api = {
+      setShape: function (o) {
+        S.axis = o.axis; S.phi0 = o.phi0;
+        var g = new Buf(), white = [1, 1, 1], p = o.profile, i, arr = [], A, B;
+        for (i = 0; i < p.length - 1; i++) surfPiece(g, p[i][0], p[i][1], p[i + 1][0], p[i + 1][1], 72, S.phi0, S.phi0 + TAU, white);
+        (o.walls || []).forEach(function (w) { surfPiece(g, w[0], w[1], w[2], w[3], 72, S.phi0, S.phi0 + TAU, white); });
+        var gm = put('ghost', mesh(g, mGhost), 6);
+        if (gm) gm.visible = S.ghost;
+        for (i = 0; i < p.length - 1; i++) {
+          A = pt(p[i][0], p[i][1], S.phi0); B = pt(p[i + 1][0], p[i + 1][1], S.phi0);
+          arr.push(A[0], A[1], A[2], B[0], B[1], B[2]);
+        }
+        put('curve', lines(arr, mCurve), 2);
+        var bd = o.bounds, m = (bd.smax - bd.smin) * 0.12 + bd.rmax * 0.15 + 0.05;
+        var a0 = pt(bd.smin - m, 0, 0), a1 = pt(bd.smax + m, 0, 0);
+        var ag = new T.BufferGeometry();
+        ag.setAttribute('position', new T.Float32BufferAttribute([a0[0], a0[1], a0[2], a1[0], a1[1], a1[2]], 3));
+        var axl = new T.Line(ag, mAxis); axl.computeLineDistances(); put('axis', axl, 1);
+        var c3 = pt((bd.smin + bd.smax) / 2, 0, 0);
+        center.set(c3[0], c3[1], c3[2]);
+        radius = Math.sqrt(Math.pow((bd.smax - bd.smin) / 2, 2) + bd.rmax * bd.rmax) || 1;
+        mAxis.dashSize = radius * 0.06; mAxis.gapSize = radius * 0.04;
+        resize(); fit();
+      },
+      setPieces: function (list, solid, cA, cB) {
+        S.pieces = list; S.solid = solid; S.cA = rgbf(cA); S.cB = rgbf(cB);
+        S.K = list.length > 40 ? 48 : 64;
+        var b = new Buf(), rims = [], A = S.phi0, B = S.phi0 + TAU, K = S.K;
+        list.forEach(function (q, i) {
+          var col = i % 2 ? S.cB : S.cA;
+          if (solid) {
+            solidPiece(b, q.s0, q.s1, q.r0, q.r1, K, A, B, col);
+            if (q.r1 > 1e-9) { circle(rims, q.s0, q.r1, K, A, B); circle(rims, q.s1, q.r1, K, A, B); }
+            if (q.r0 > 1e-9) { circle(rims, q.s0, q.r0, K, A, B); circle(rims, q.s1, q.r0, K, A, B); }
+          } else {
+            surfPiece(b, q.s0, q.r0, q.s1, q.r1, K, A, B, col);
+            if (q.r0 > 1e-9) circle(rims, q.s0, q.r0, K, A, B);
+            if (q.r1 > 1e-9) circle(rims, q.s1, q.r1, K, A, B);
+          }
+        });
+        put('pieces', mesh(b, mPieces), 0);
+        put('rims', lines(rims, mRim), 3);
+        applyClip(); buildCut(); render();
+      },
+      setSweep: function (Phi) { S.Phi = Math.max(0, Math.min(TAU, Phi)); applyClip(); buildCut(); render(); },
+      setGhost: function (on) { S.ghost = on; if (objs.ghost) objs.ghost.visible = on; render(); },
+      setInk: function (ink, axisCol, dark) {
+        mRim.color.set(ink); mEdge.color.set(ink); mCurve.color.set(ink); mGhost.color.set(ink); mAxis.color.set(axisCol);
+        mGhost.opacity = dark ? 0.2 : 0.13; mRim.opacity = dark ? 0.5 : 0.4;
+        render();
+      }
+    };
+    return api;
+  }
+
+  /* =========================================================
+     6. Ejemplos precargados
+     ========================================================= */
+  var PRESETS = {
+    arc: [
+      { id: 'catenaria', name: 'Catenaria (ejemplo)', expr: '(e^x + e^(-x))/2', a: '-1', b: '1', exact: 'e \u2212 1/e' },
+      { id: 'parabola', name: 'Parábola', expr: 'x^2', a: '-1', b: '1', exact: '\u221a5 + \u00bd\u00b7ln(2 + \u221a5)' },
+      { id: 'onda', name: 'Onda', expr: 'sen(x)', a: '0', b: '2pi' },
+      { id: 'montana', name: 'Montaña rusa', expr: 'x^3/4 - x + 2', a: '-2', b: '2.5' },
+      { id: 'raiz', name: 'Raíz cuadrada', expr: 'sqrt(x)', a: '0', b: '4', exact: '\u221a17 + \u00bc\u00b7ln(4 + \u221a17)' },
+      { id: 'recta', name: 'Recta diagonal', expr: 'x', a: '0', b: '1', exact: '\u221a2' },
+      { id: 'semicirculo', name: 'Semicircunferencia', expr: 'sqrt(1 - x^2)', a: '-1', b: '1', exact: '\u03c0' }
+    ],
+    vol: [
+      { id: 'ej18-ii', name: 'Ejercicio 18 (II): x² y eje OY', expr: 'x^2', a: '0', b: '1', axis: 'y', exact: { y: '\u03c0/2' } },
+      { id: 'ej18-iii', name: 'Ejercicio 18 (III): √x y eje OX', expr: 'sqrt(x)', a: '0', b: '1', axis: 'x', exact: { x: '\u03c0/2' } },
+      { id: 'cono', name: 'Cono', expr: 'x', a: '0', b: '1', axis: 'x', exact: { x: '\u03c0/3' } },
+      { id: 'esfera', name: 'Esfera', expr: 'sqrt(1 - x^2)', a: '-1', b: '1', axis: 'x', exact: { x: '4\u03c0/3' } },
+      { id: 'jarron', name: 'Jarrón', expr: '1 + 0.4 sen(2x)', a: '0', b: 'pi', axis: 'x', exact: { x: '1,08\u00b7\u03c0\u00b2' } },
+      { id: 'campana', name: 'Campana', expr: 'e^(-x^2)', a: '0', b: '2', axis: 'y', exact: { y: '\u03c0(1 \u2212 e\u207b\u2074)' } },
+      { id: 'gabriel', name: 'Trompeta de Gabriel', expr: '1/x', a: '1', b: '10', axis: 'x', exact: { x: '9\u03c0/10' } }
+    ],
+    area: [
+      { id: 'cono', name: 'Cono de los apuntes', expr: 'x', a: '0', b: '1', axis: 'y', exact: { x: '\u221a2\u00b7\u03c0', y: '\u221a2\u00b7\u03c0' } },
+      { id: 'esfera', name: 'Esfera', expr: 'sqrt(1 - x^2)', a: '-1', b: '1', axis: 'x', exact: { x: '4\u03c0' } },
+      { id: 'cilindro', name: 'Cilindro', expr: '1', a: '0', b: '2', axis: 'x', exact: { x: '4\u03c0' } },
+      { id: 'paraboloide', name: 'Paraboloide', expr: 'x^2', a: '0', b: '1', axis: 'y', exact: { y: '\u03c0(5\u221a5 \u2212 1)/6' } },
+      { id: 'jarron', name: 'Jarrón', expr: '1 + 0.4 sen(2x)', a: '0', b: 'pi', axis: 'x' },
+      { id: 'gabriel', name: 'Trompeta de Gabriel', expr: '1/x', a: '1', b: '10', axis: 'x' }
+    ]
+  };
+
+  /* =========================================================
+     7. Laboratorios
+     ========================================================= */
+  function q(el, role) { return el.querySelector('[data-role="' + role + '"]'); }
+  function out(el, name, txt) { var o = el.querySelector('[data-out="' + name + '"]'); if (o) o.textContent = txt; }
+  function paintRange(r) { r.style.setProperty('--p', ((r.value - r.min) / (r.max - r.min) * 100) + '%'); }
+
+  function segControl(el, role, onPick) {
+    var g = q(el, role);
+    if (!g) return null;
+    var bs = Array.prototype.slice.call(g.querySelectorAll('button'));
+    function set(v) { bs.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === v)); }); }
+    g.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button') : null;
+      if (!b || !g.contains(b)) return;
+      set(b.getAttribute('data-v')); onPick(b.getAttribute('data-v'));
+    });
+    var cur = bs.filter(function (b) { return b.getAttribute('aria-pressed') === 'true'; })[0] || bs[0];
+    return { set: set, value: cur.getAttribute('data-v') };
+  }
+
+  function makeLab(el, kind) {
+    var L = { el: el, kind: kind, exact: NaN, seqs: {}, anims: {} };
+    var presets = PRESETS[kind];
+    var sel = q(el, 'preset'), iE = q(el, 'expr'), iA = q(el, 'a'), iB = q(el, 'b');
+    var rN = q(el, 'n'), rG = q(el, 'giro'), cG = q(el, 'ghost');
+    var errBox = q(el, 'error'), infoBox = q(el, 'info');
+    var st = L.st = { f: null, a: 0, b: 1, n: +rN.value, mode: 'seg', axis: 'x', sample: 'L', Phi: rG ? +rG.value / 360 * TAU : TAU, ghost: true, presetId: null };
+
+    presets.forEach(function (p) { sel.appendChild(new Option(p.name, p.id)); });
+    sel.appendChild(new Option('Mi propia función', 'custom'));
+
+    L.plot = new Plot(q(el, 'plot'), kind === 'arc' ? 0.7 : 0.92, kind === 'arc' ? 260 : 250, kind === 'arc' ? 520 : 440);
+    L.conv = q(el, 'conv');
+    var host = q(el, 'three');
+    L.s3 = host ? Scene3D(host) : null;
+
+    var modeSeg = segControl(el, 'mode', function (v) { st.mode = v; refresh(); });
+    if (modeSeg) st.mode = modeSeg.value;
+    var axisSeg = segControl(el, 'axis', function (v) {
+      st.axis = v; hideInfo();
+      if (v === 'y') {
+        var a = null;
+        try { a = evalNumber(iA.value, 'a'); } catch (e) { a = null; }
+        if (a !== null && a < 0) {
+          iA.value = '0'; st.presetId = null; sel.value = 'custom';
+          showInfo('Para girar alrededor del eje OY hace falta x ≥ 0, así que a pasa a valer 0.');
+        }
+      }
+      commit();
+    });
+    if (axisSeg) st.axis = axisSeg.value;
+    var sampleSeg = segControl(el, 'sample', function (v) { st.sample = v; recompute(false); });
+    if (sampleSeg) st.sample = sampleSeg.value;
+
+    function findPreset(id) { return presets.filter(function (p) { return p.id === id; })[0] || null; }
+    function showErr(msg) { errBox.textContent = msg; errBox.hidden = false; el.classList.add('is-stale'); return false; }
+    function hideErr() { errBox.hidden = true; el.classList.remove('is-stale'); }
+    function showInfo(msg) { if (infoBox) { infoBox.textContent = msg; infoBox.hidden = false; } }
+    function hideInfo() { if (infoBox) infoBox.hidden = true; }
+
+    function commit() {
+      var f, a, b, msg;
+      try { f = compileFn(iE.value); a = evalNumber(iA.value, 'a'); b = evalNumber(iB.value, 'b'); }
+      catch (e) { if (e instanceof ParseError) return showErr(e.message); throw e; }
+      msg = validate(f, a, b, kind !== 'arc' && st.axis === 'y');
+      if (msg) return showErr(msg);
+      hideErr();
+      st.f = f; st.a = a; st.b = b;
+      recompute(true);
+      return true;
+    }
+
+    function closedForm() {
+      var p = st.presetId ? findPreset(st.presetId) : null;
+      if (!p || iE.value !== p.expr || iA.value !== p.a || iB.value !== p.b) return '';
+      if (kind === 'arc') return p.exact || '';
+      return (p.exact && p.exact[st.axis]) || '';
+    }
+
+    function recompute(shapeChanged) {
+      var f = st.f, a = st.a, b = st.b, ax = st.axis;
+      if (!f) return;
+      if (kind === 'arc') {
+        L.exact = sumChords(f, a, b, NFINE);
+        L.seqs.seg = seq(function (k) { return sumChords(f, a, b, k); });
+        L.seqs.stairs = seq(function (k) { return sumStairs(f, a, b, k); });
+      } else if (kind === 'vol') {
+        L.exact = ax === 'x' ? sumDiscs(f, a, b, NFINE, 'M') : sumShells(f, a, b, NFINE, 'M');
+        L.seqs.main = seq(function (k) { return ax === 'x' ? sumDiscs(f, a, b, k, st.sample) : sumShells(f, a, b, k, st.sample); });
+      } else {
+        L.exact = sumBands(f, a, b, NFINE, ax);
+        L.seqs.band = seq(function (k) { return sumBands(f, a, b, k, ax); });
+        L.seqs.cyl = seq(function (k) { return sumCyls(f, a, b, k, ax); });
+      }
+      L.closed = closedForm();
+      if (L.s3 && shapeChanged) L.s3.setShape(shapeSpec());
+      refresh();
+    }
+
+    function shapeSpec() {
+      var f = st.f, a = st.a, b = st.b, N = 180, prof = [], i, x, y, fmin = Infinity, fmax = -Infinity, amax = 0, sum = 0, o, lo, hi;
+      for (i = 0; i <= N; i++) {
+        x = xAt(a, b, N, i); y = f(x);
+        if (y < fmin) fmin = y; if (y > fmax) fmax = y;
+        amax = Math.max(amax, Math.abs(y)); sum += y;
+        prof.push(st.axis === 'x' ? [x, Math.abs(y)] : [y, x]);
+      }
+      o = { axis: st.axis, phi0: (st.axis === 'x' && sum < 0) ? Math.PI : 0, profile: prof, walls: [] };
+      if (st.axis === 'x') o.bounds = { smin: a, smax: b, rmax: amax || 1 };
+      else {
+        lo = kind === 'vol' ? Math.min(0, fmin) : fmin; hi = kind === 'vol' ? Math.max(0, fmax) : fmax;
+        if (hi - lo < 1e-9) { lo -= 0.5; hi += 0.5; }
+        o.bounds = { smin: lo, smax: hi, rmax: b || 1 };
+        if (kind === 'vol') { o.walls.push([0, b, f(b), b]); if (a > 1e-9) o.walls.push([0, a, f(a), a]); }
+      }
+      return o;
+    }
+
+    function piecesSpec() {
+      var f = st.f, a = st.a, b = st.b, n = st.n, list = [], i, x0, x1, y0, y1, h, xm, ym;
+      if (kind === 'vol') {
+        for (i = 0; i < n; i++) {
+          x0 = xAt(a, b, n, i); x1 = xAt(a, b, n, i + 1); h = f(sp(x0, x1, st.sample));
+          if (!isFinite(h) || Math.abs(h) < 1e-12) continue;
+          list.push(st.axis === 'x' ? { s0: x0, s1: x1, r0: 0, r1: Math.abs(h) } : { s0: Math.min(0, h), s1: Math.max(0, h), r0: x0, r1: x1 });
+        }
+        return { list: list, solid: true };
+      }
+      for (i = 0; i < n; i++) {
+        x0 = xAt(a, b, n, i); x1 = xAt(a, b, n, i + 1); y0 = f(x0); y1 = f(x1); xm = 0.5 * (x0 + x1);
+        if (st.mode === 'band') {
+          list.push(st.axis === 'x' ? { s0: x0, r0: Math.abs(y0), s1: x1, r1: Math.abs(y1) } : { s0: y0, r0: x0, s1: y1, r1: x1 });
+        } else {
+          ym = f(xm);
+          list.push(st.axis === 'x' ? { s0: x0, r0: Math.abs(ym), s1: x1, r1: Math.abs(ym) } : { s0: y0, r0: xm, s1: y1, r1: xm });
+        }
+      }
+      return { list: list, solid: false };
+    }
+
+    function refresh() {
+      if (!st.f) return;
+      draw2D(); drawConvergence(); stats();
+      if (L.s3) {
+        var th = theme(el), sp3 = piecesSpec(), c = (kind === 'area' && st.mode === 'cyl') ? th.violeta : th.acc;
+        L.s3.setPieces(sp3.list, sp3.solid, c, mix(c, '#ffffff', 0.42));
+      }
+    }
+
+    function stats() {
+      var n = st.n, ex = L.exact, ap, s, cap;
+      var note = L.closed ? '= ' + L.closed : 'calculado con 20 000 trozos';
+      out(el, 'exact', fmt(ex)); out(el, 'exactNote', note);
+      if (kind === 'arc') {
+        s = st.mode === 'stairs' ? L.seqs.stairs : L.seqs.seg;
+        out(el, 'approxLabel', st.mode === 'stairs' ? 'Escalera con ' + plural(n, 'escalón', 'escalones') : 'Poligonal con ' + plural(n, 'trozo', 'trozos'));
+        ap = s[n - 1];
+        el.classList.toggle('is-trap', st.mode === 'stairs');
+      } else if (kind === 'vol') {
+        ap = L.seqs.main[n - 1];
+        out(el, 'approxLabel', 'Suma de ' + (st.axis === 'x' ? plural(n, 'disco', 'discos') : plural(n, 'capa', 'capas')));
+      } else {
+        out(el, 'bandLabel', 'Con ' + plural(n, 'banda', 'bandas'));
+        out(el, 'cylLabel', 'Con ' + plural(n, 'cilindro', 'cilindros'));
+        out(el, 'band', fmt(L.seqs.band[n - 1]));
+        out(el, 'cyl', fmt(L.seqs.cyl[n - 1]));
+        var sb = el.querySelector('[data-stat="band"]'), sc = el.querySelector('[data-stat="cyl"]');
+        if (sb && sc) { sb.classList.toggle('is-main', st.mode === 'band'); sc.classList.toggle('is-main', st.mode === 'cyl'); sb.classList.toggle('is-off', st.mode !== 'band'); sc.classList.toggle('is-off', st.mode !== 'cyl'); }
+        ap = st.mode === 'band' ? L.seqs.band[n - 1] : L.seqs.cyl[n - 1];
+        el.classList.toggle('is-trap', st.mode === 'cyl');
+      }
+      out(el, 'approx', fmt(ap));
+      var err = Math.abs(ap - ex);
+      out(el, 'err', fmt(err));
+      out(el, 'errPct', Math.abs(ex) > 1e-12 ? '(' + (100 * err / Math.abs(ex)).toFixed(2).replace('.', ',') + ' % del valor real)' : '');
+      out(el, 'n', String(n));
+      cap = q(el, 'cap');
+      if (cap) cap.textContent = caption();
+    }
+
+    function caption() {
+      var P = L.plot;
+      if (kind === 'arc') {
+        return (st.mode === 'stairs'
+          ? 'Escalones: tramos horizontales y verticales que se pegan a la curva, pero no van en su dirección.'
+          : 'Cada segmento es la hipotenusa de un triangulito de catetos Δx y Δy.') +
+          (P.equal ? ' Los dos ejes están a la misma escala.' : ' Ojo: los ejes tienen escalas distintas, así que el dibujo deforma las longitudes.');
+      }
+      if (kind === 'vol') {
+        return (st.axis === 'x' ? 'Cada rectángulo, al girar alrededor del eje OX, da un disco.' : 'Cada rectángulo, al girar alrededor del eje OY, da una capa (un tubo).') +
+          ' La parte más clara es la otra mitad del corte del sólido.';
+      }
+      return st.mode === 'band'
+        ? 'Cada segmento, al girar, barre una banda inclinada.'
+        : 'Cada cilindro solo mide la sombra del trozo de curva sobre el eje (en violeta).';
+    }
+
+    /* ---------- dibujos 2D ---------- */
+    function draw2D() {
+      var th = theme(el), P = L.plot;
+      P.size(th.dark);
+      if (kind === 'arc') drawArc(th); else if (kind === 'vol') drawVol(th); else drawArea(th);
+    }
+
+    function drawArc(th) {
+      var P = L.plot, c = P.ctx, f = st.f, a = st.a, b = st.b, n = st.n, i;
+      var cur = sample(f, a, b, 500), r = yRange(cur), lo = r[0], hi = r[1], span = Math.max(hi - lo, 1e-9);
+      if (lo > 0 && lo <= 2.5 * span) lo = 0;
+      if (hi < 0 && -hi <= 2.5 * span) hi = 0;
+      var px = (b - a) * 0.05, py = Math.max((hi - lo) * 0.08, 0.05);
+      P.setView(a - px, b + px, lo - py, hi + py);
+      P.grid(th);
+      var xs = [], ys = [];
+      for (i = 0; i <= n; i++) { xs.push(xAt(a, b, n, i)); ys.push(f(xs[i])); }
+      var stairs = st.mode === 'stairs', acc = stairs ? th.violeta : th.acc, acc2 = mix(acc, '#000000', th.dark ? 0.0 : 0.3);
+      if (th.dark) acc2 = mix(acc, '#ffffff', 0.35);
+      var by = P.baseY();
+      if (n <= 40) {
+        c.save(); c.setLineDash([3, 4]); c.strokeStyle = th.faint; c.lineWidth = 1; c.beginPath();
+        for (i = 0; i <= n; i++) { c.moveTo(P.X(xs[i]), by); c.lineTo(P.X(xs[i]), P.Y(ys[i])); }
+        c.stroke(); c.restore();
+      }
+      if (stairs) {
+        c.lineWidth = n > 50 ? 2 : 2.8; c.lineJoin = 'miter'; c.lineCap = 'square';
+        for (i = 0; i < n; i++) {
+          c.strokeStyle = i % 2 ? acc2 : acc; c.beginPath();
+          c.moveTo(P.X(xs[i]), P.Y(ys[i])); c.lineTo(P.X(xs[i + 1]), P.Y(ys[i])); c.lineTo(P.X(xs[i + 1]), P.Y(ys[i + 1])); c.stroke();
+        }
+      } else {
+        if (n <= 8) {
+          for (i = 0; i < n; i++) {
+            var X0 = P.X(xs[i]), Y0 = P.Y(ys[i]), X1 = P.X(xs[i + 1]), Y1 = P.Y(ys[i + 1]);
+            c.fillStyle = rgba(acc, 0.1); c.beginPath(); c.moveTo(X0, Y0); c.lineTo(X1, Y0); c.lineTo(X1, Y1); c.closePath(); c.fill();
+            c.save(); c.setLineDash([4, 3]); c.strokeStyle = rgba(acc, 0.6); c.lineWidth = 1.3;
+            c.beginPath(); c.moveTo(X0, Y0); c.lineTo(X1, Y0); c.lineTo(X1, Y1); c.stroke(); c.restore();
+            if (n <= 3) {
+              c.fillStyle = acc; c.font = 'italic 15px Georgia, "Times New Roman", serif'; c.textAlign = 'center';
+              c.textBaseline = Y1 < Y0 ? 'top' : 'bottom';
+              c.fillText('\u0394x', (X0 + X1) / 2, Y0 + (Y1 < Y0 ? 5 : -5));
+              if (Math.abs(Y1 - Y0) > 22) { c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillText('\u0394y', X1 + 6, (Y0 + Y1) / 2); }
+            }
+          }
+        }
+        c.lineWidth = n > 60 ? 2.4 : 3.2; c.lineCap = 'round';
+        for (i = 0; i < n; i++) {
+          c.strokeStyle = i % 2 ? acc2 : acc; c.beginPath();
+          c.moveTo(P.X(xs[i]), P.Y(ys[i])); c.lineTo(P.X(xs[i + 1]), P.Y(ys[i + 1])); c.stroke();
+        }
+      }
+      c.strokeStyle = th.curve; c.lineWidth = 1.5; c.lineJoin = 'round'; c.lineCap = 'round';
+      P.path(cur); c.stroke();
+      if (n <= 60) { var rr = n > 30 ? 2.4 : 3.4; for (i = 0; i <= n; i++) dot(c, P.X(xs[i]), P.Y(ys[i]), rr, acc, P.bg); }
+      P.abLabels(a, b, th);
+    }
+
+    function crossView(cur, withZero) {
+      var P = L.plot, r = yRange(cur), fmin = r[0], fmax = r[1], amax = Math.max(Math.abs(fmin), Math.abs(fmax)) || 1;
+      var x0, x1, y0, y1;
+      if (st.axis === 'x') { x0 = st.a; x1 = st.b; y0 = -amax; y1 = amax; }
+      else { x0 = -st.b; x1 = st.b; y0 = withZero ? Math.min(0, fmin) : fmin; y1 = withZero ? Math.max(0, fmax) : fmax; if (y1 - y0 < 1e-9) { y0 -= 0.5; y1 += 0.5; } }
+      var px = (x1 - x0) * 0.05, py = Math.max((y1 - y0) * 0.07, 0.05);
+      P.setView(x0 - px, x1 + px, y0 - py, y1 + py);
+    }
+    function mirror(pts) { return pts.map(function (p) { return st.axis === 'x' ? [p[0], -p[1]] : [-p[0], p[1]]; }); }
+
+    function drawVol(th) {
+      var P = L.plot, c = P.ctx, f = st.f, a = st.a, b = st.b, n = st.n, i, x0, x1, h, X0, X1, Y0, Y1;
+      var cur = sample(f, a, b, 400), acc = th.acc, colB = mix(acc, '#ffffff', 0.42), mcur = mirror(cur);
+      crossView(cur, true); P.grid(th);
+      c.fillStyle = rgba(acc, 0.06); P.region(mcur); c.fill();
+      c.fillStyle = rgba(acc, 0.12); P.region(cur); c.fill();
+      for (i = 0; i < n; i++) {
+        x0 = xAt(a, b, n, i); x1 = xAt(a, b, n, i + 1); h = f(sp(x0, x1, st.sample));
+        var col = i % 2 ? colB : acc;
+        if (st.axis === 'x') { X0 = P.X(x0); X1 = P.X(x1); Y0 = P.Y(0); Y1 = P.Y(-h); }
+        else { X0 = P.X(-x1); X1 = P.X(-x0); Y0 = P.Y(0); Y1 = P.Y(h); }
+        c.fillStyle = rgba(col, 0.22); c.fillRect(X0, Math.min(Y0, Y1), X1 - X0, Math.abs(Y1 - Y0));
+        X0 = P.X(x0); X1 = P.X(x1); Y0 = P.Y(0); Y1 = P.Y(h);
+        c.fillStyle = rgba(col, 0.62); c.fillRect(X0, Math.min(Y0, Y1), X1 - X0, Math.abs(Y1 - Y0));
+        if (n <= 60) { c.strokeStyle = rgba(acc, 0.95); c.lineWidth = 1; c.strokeRect(X0, Math.min(Y0, Y1), X1 - X0, Math.abs(Y1 - Y0)); }
+        if (n <= 16) dot(c, P.X(sp(x0, x1, st.sample)), P.Y(h), 3, acc, P.bg);
+      }
+      c.save(); c.setLineDash([5, 4]); c.strokeStyle = th.faint; c.lineWidth = 1.3; P.path(mcur); c.stroke(); c.restore();
+      c.strokeStyle = th.curve; c.lineWidth = 1.7; P.path(cur); c.stroke();
+      P.rotAxis(st.axis, th);
+      P.abLabels(a, b, th);
+    }
+
+    function drawArea(th) {
+      var P = L.plot, c = P.ctx, f = st.f, a = st.a, b = st.b, n = st.n, i, x0, x1, y0, y1, xm, ym;
+      var cur = sample(f, a, b, 400), mcur = mirror(cur), cyl = st.mode === 'cyl';
+      var acc = cyl ? th.violeta : th.acc, acc2 = mix(acc, th.dark ? '#ffffff' : '#000000', 0.3), sgn = st.axis === 'x' ? [1, -1] : [-1, 1];
+      crossView(cur, false); P.grid(th);
+      c.save(); c.setLineDash([5, 4]); c.strokeStyle = th.faint; c.lineWidth = 1.3; P.path(mcur); c.stroke(); c.restore();
+      c.strokeStyle = th.curve; c.lineWidth = 1.6; P.path(cur); c.stroke();
+      c.lineCap = 'round';
+      for (i = 0; i < n; i++) {
+        x0 = xAt(a, b, n, i); x1 = xAt(a, b, n, i + 1); y0 = f(x0); y1 = f(x1); xm = 0.5 * (x0 + x1);
+        var seg;
+        if (!cyl) seg = [[x0, y0], [x1, y1]];
+        else if (st.axis === 'x') { ym = f(xm); seg = [[x0, ym], [x1, ym]]; }
+        else seg = [[xm, y0], [xm, y1]];
+        c.strokeStyle = rgba(acc, 0.35); c.lineWidth = n > 60 ? 1.6 : 2.4; c.beginPath();
+        c.moveTo(P.X(seg[0][0] * sgn[0]), P.Y(seg[0][1] * sgn[1])); c.lineTo(P.X(seg[1][0] * sgn[0]), P.Y(seg[1][1] * sgn[1])); c.stroke();
+        if (cyl && n <= 40) {
+          c.save(); c.setLineDash([3, 3]); c.strokeStyle = th.faint; c.lineWidth = 1.2; c.beginPath();
+          c.moveTo(P.X(x0), P.Y(y0)); c.lineTo(P.X(x1), P.Y(y1)); c.stroke(); c.restore();
+        }
+        c.strokeStyle = i % 2 ? acc2 : acc; c.lineWidth = n > 60 ? 2.4 : 3.4; c.beginPath();
+        c.moveTo(P.X(seg[0][0]), P.Y(seg[0][1])); c.lineTo(P.X(seg[1][0]), P.Y(seg[1][1])); c.stroke();
+      }
+      if (n <= 60) { for (i = 0; i <= n; i++) { x0 = xAt(a, b, n, i); dot(c, P.X(x0), P.Y(f(x0)), n > 30 ? 2.2 : 3, th.ink, P.bg); } }
+      P.rotAxis(st.axis, th);
+      P.abLabels(a, b, th);
+    }
+
+    /* ---------- gráfica de convergencia ---------- */
+    function drawConvergence() {
+      var cv = L.conv, th = theme(el), w = cv.parentNode.clientWidth || 300, h = 158;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2.5), c = cv.getContext('2d'), bg = bgOf(cv.parentNode, th.dark);
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + 'px';
+      c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+      var list = [];
+      if (kind === 'arc') {
+        list.push({ v: L.seqs.seg, col: th.acc, name: 'segmentos' });
+        if (st.mode === 'stairs') list.push({ v: L.seqs.stairs, col: th.violeta, name: 'escalones' });
+      } else if (kind === 'vol') list.push({ v: L.seqs.main, col: th.acc, name: st.axis === 'x' ? 'discos' : 'capas' });
+      else { list.push({ v: L.seqs.band, col: th.acc, name: 'bandas' }); list.push({ v: L.seqs.cyl, col: th.violeta, name: 'cilindros' }); }
+      var ex = L.exact, lo = ex, hi = ex, p = { l: 56, r: 14, t: 26, b: 24 };
+      list.forEach(function (s) { s.v.forEach(function (v) { if (isFinite(v)) { if (v < lo) lo = v; if (v > hi) hi = v; } }); });
+      var m = (hi - lo) * 0.12; if (!(m > 1e-9)) m = Math.max(Math.abs(ex) * 0.02, 0.01);
+      lo -= m; hi += m;
+      function X(k) { return p.l + (k - 1) / (NMAX - 1) * (w - p.l - p.r); }
+      function Y(v) { return p.t + (hi - v) / (hi - lo) * (h - p.t - p.b); }
+      c.font = '11px ' + th.font; c.fillStyle = th.muted; c.strokeStyle = th.grid; c.lineWidth = 1;
+      c.textAlign = 'right'; c.textBaseline = 'middle';
+      [hi - m, lo + m].forEach(function (v) {
+        var Yv = Math.round(Y(v)) + 0.5;
+        c.beginPath(); c.moveTo(p.l, Yv); c.lineTo(w - p.r, Yv); c.stroke();
+        if (Math.abs(Y(v) - Y(ex)) > 13) c.fillText(fmt(v, 3), p.l - 6, Y(v));
+      });
+      c.save(); c.setLineDash([6, 5]); c.strokeStyle = th.ink; c.globalAlpha = 0.75; c.lineWidth = 1.4;
+      c.beginPath(); c.moveTo(p.l, Y(ex)); c.lineTo(w - p.r, Y(ex)); c.stroke(); c.restore();
+      c.fillStyle = th.ink; c.font = '600 11px ' + th.font; c.fillText(fmt(ex, 3), p.l - 6, Y(ex));
+      c.textAlign = 'right'; c.textBaseline = 'bottom'; c.font = '12px ' + th.font; c.fillStyle = th.muted;
+      c.fillText('valor real', w - p.r, Y(ex) - 3);
+      list.forEach(function (s) {
+        var k; c.strokeStyle = rgba(s.col, 0.45); c.lineWidth = 1.2; c.beginPath();
+        for (k = 1; k <= NMAX; k++) { if (k === 1) c.moveTo(X(k), Y(s.v[0])); else c.lineTo(X(k), Y(s.v[k - 1])); }
+        c.stroke(); c.fillStyle = s.col;
+        for (k = 1; k <= NMAX; k++) { c.beginPath(); c.arc(X(k), Y(s.v[k - 1]), 1.7, 0, TAU); c.fill(); }
+      });
+      var Xn = X(st.n);
+      c.strokeStyle = th.faint; c.lineWidth = 1; c.beginPath(); c.moveTo(Xn, p.t - 4); c.lineTo(Xn, h - p.b); c.stroke();
+      list.forEach(function (s) { dot(c, Xn, Y(s.v[st.n - 1]), 4.6, s.col, bg); });
+      c.fillStyle = th.muted; c.font = '11px ' + th.font; c.textAlign = 'center'; c.textBaseline = 'top';
+      [1, 25, 50, 75, 100].forEach(function (k) { c.fillText(k === 1 ? 'n = 1' : String(k), X(k), h - p.b + 6); });
+      if (list.length > 1) {
+        var lx = p.l + 2; c.textAlign = 'left'; c.textBaseline = 'middle'; c.font = '12px ' + th.font;
+        list.forEach(function (s) {
+          c.fillStyle = s.col; c.beginPath(); c.arc(lx + 4, 11, 4, 0, TAU); c.fill();
+          c.fillStyle = th.muted; c.fillText(s.name, lx + 12, 11); lx += c.measureText(s.name).width + 30;
+        });
+      }
+    }
+
+    /* ---------- controles ---------- */
+    var tmr = 0;
+    function onEdit() { st.presetId = null; sel.value = 'custom'; hideInfo(); clearTimeout(tmr); tmr = setTimeout(commit, 380); }
+    [iE, iA, iB].forEach(function (inp) {
+      inp.addEventListener('input', onEdit);
+      inp.addEventListener('change', function () { clearTimeout(tmr); commit(); });
+    });
+    sel.addEventListener('change', function () {
+      if (sel.value === 'custom') { st.presetId = null; iE.focus(); iE.select(); }
+      else L.load(sel.value);
+    });
+
+    function setN(n) {
+      n = Math.max(1, Math.min(NMAX, Math.round(n)));
+      st.n = n; rN.value = n; paintRange(rN);
+      refresh();
+    }
+    function setPhi(deg) {
+      st.Phi = deg / 360 * TAU; rG.value = deg; paintRange(rG);
+      out(el, 'giro', Math.round(deg) + '°');
+      if (L.s3) L.s3.setSweep(st.Phi);
+    }
+    rN.addEventListener('input', function () { stopAnim('n'); setN(+rN.value); });
+    paintRange(rN);
+    if (rG) { rG.addEventListener('input', function () { stopAnim('g'); setPhi(+rG.value); }); paintRange(rG); out(el, 'giro', rG.value + '°'); }
+    if (cG) cG.addEventListener('change', function () { st.ghost = cG.checked; if (L.s3) L.s3.setGhost(cG.checked); });
+
+    function stopAnim(w) {
+      if (L.anims[w]) cancelAnimationFrame(L.anims[w]);
+      L.anims[w] = 0;
+      var btn = el.querySelector('[data-play="' + w + '"]');
+      if (btn) { btn.classList.remove('is-on'); btn.setAttribute('aria-label', btn.getAttribute('data-label')); }
+    }
+    function startAnim(w, btn) {
+      var t0 = 0, T = w === 'n' ? 6500 : 3400;
+      btn.classList.add('is-on'); btn.setAttribute('aria-label', 'Parar la animación');
+      function frame(now) {
+        if (!t0) t0 = now;
+        var t = Math.min(1, (now - t0) / T);
+        if (w === 'n') { var n = 1 + Math.floor((NMAX - 1) * t * t + 1e-9); if (n !== st.n) setN(n); }
+        else setPhi(360 * t);
+        if (t < 1) L.anims[w] = requestAnimationFrame(frame); else stopAnim(w);
+      }
+      if (w === 'n') setN(1); else setPhi(0);
+      L.anims[w] = requestAnimationFrame(frame);
+    }
+    Array.prototype.forEach.call(el.querySelectorAll('[data-play]'), function (btn) {
+      btn.setAttribute('data-label', btn.getAttribute('aria-label'));
+      btn.addEventListener('click', function () {
+        var w = btn.getAttribute('data-play');
+        if (L.anims[w]) stopAnim(w); else startAnim(w, btn);
+      });
+    });
+
+    L.load = function (id, extra) {
+      var p = findPreset(id);
+      if (!p) return;
+      stopAnim('n'); stopAnim('g');
+      iE.value = p.expr; iA.value = p.a; iB.value = p.b; sel.value = id; st.presetId = id; hideInfo();
+      if (p.axis && axisSeg) { st.axis = p.axis; axisSeg.set(p.axis); }
+      if (extra && extra.mode && modeSeg) { st.mode = extra.mode; modeSeg.set(extra.mode); }
+      if (extra && extra.n) { st.n = Math.max(1, Math.min(NMAX, extra.n)); rN.value = st.n; paintRange(rN); }
+      commit();
+    };
+    L.redraw = function () { if (st.f) { draw2D(); drawConvergence(); stats(); } };
+    L.retheme = function () {
+      if (L.s3) { var th = theme(el); L.s3.setInk(th.ink, th.rojo, th.dark); }
+      refresh();
+    };
+
+    var lastW = 0, roRaf = 0;
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () {
+        if (roRaf) return;
+        roRaf = requestAnimationFrame(function () { roRaf = 0; var w = el.clientWidth; if (w !== lastW) { lastW = w; L.redraw(); } });
+      }).observe(el);
+    } else window.addEventListener('resize', function () { L.redraw(); });
+
+    if (L.s3) { var th0 = theme(el); L.s3.setInk(th0.ink, th0.rojo, th0.dark); L.s3.setSweep(st.Phi); }
+    L.load(el.getAttribute('data-start') || presets[0].id);
+    return L;
+  }
+
+  /* =========================================================
+     8. Arranque
+     ========================================================= */
+  var LABS = {};
+  function boot() {
+    var root = document.getElementById('rv-app');
+    if (!root) return;
+    function detectDark() { root.classList.toggle('rv-dark', isDarkInk(getComputedStyle(root).color)); }
+    detectDark();
+    if (window.renderMathInElement) {
+      try {
+        window.renderMathInElement(root, {
+          delimiters: [{ left: '\\[', right: '\\]', display: true }, { left: '\\(', right: '\\)', display: false }],
+          throwOnError: false, strict: 'ignore',
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'option', 'select']
+        });
+      } catch (e) { /* si KaTeX falla, las fórmulas se quedan en texto */ }
+    }
+    Array.prototype.forEach.call(root.querySelectorAll('[data-lab]'), function (el) {
+      LABS[el.getAttribute('data-lab')] = makeLab(el, el.getAttribute('data-lab'));
+    });
+    root.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('[data-try]') : null;
+      if (!b) return;
+      var parts = b.getAttribute('data-try').split(':'), lab = LABS[parts[0]], extra = {};
+      if (!lab) return;
+      if (b.getAttribute('data-mode')) extra.mode = b.getAttribute('data-mode');
+      if (b.getAttribute('data-n')) extra.n = +b.getAttribute('data-n');
+      lab.load(parts[1], extra);
+      lab.el.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'start' });
+    });
+    var tm = 0;
+    function onTheme() {
+      clearTimeout(tm);
+      tm = setTimeout(function () { detectDark(); Object.keys(LABS).forEach(function (k) { LABS[k].retheme(); }); }, 60);
+    }
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      if (mq.addEventListener) mq.addEventListener('change', onTheme); else if (mq.addListener) mq.addListener(onTheme);
+    }
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(onTheme);
+      [document.documentElement, document.body].forEach(function (n) { mo.observe(n, { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] }); });
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { Object.keys(LABS).forEach(function (k) { LABS[k].redraw(); }); });
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+
+})();
+</script>
+</div>
+
